@@ -82,8 +82,8 @@ services:
 
       # Uploaded photos live on the container filesystem. The free plan has no
       # persistent disk, so uploads disappear on redeploy/restart. To keep
-      # them, upgrade the service to "starter" and uncomment the disk below
-      # (also change plan: free to plan: starter above).
+      # them, upgrade the service to a paid instance and uncomment the disk
+      # below (also change plan: free above to the paid plan ID Render shows).
       # disk:
       #   name: unilodge-uploads
       #   mountPath: /app/uploads
