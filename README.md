@@ -26,7 +26,10 @@ unilodge-persistence/  JPA entities, repositories, specifications, Flyway SQL
 unilodge-service/      business logic: auth, OTP, email, storage, audit, admin
 unilodge-web/          Spring Boot app, REST controllers, security, static UI
 docs/API.md            endpoint reference
+docs/RENDER.md         Render deployment guide
+render.yaml            Render Blueprint (Docker + Postgres)
 Dockerfile             multi-stage production image
+docker-entrypoint.sh   fixes mounted-disk ownership, drops privileges
 docker-compose.yml     PostgreSQL + application stack
 .env.example           environment template for Docker Compose
 run-dev.bat            local Windows launcher (port 8081)
@@ -125,7 +128,8 @@ They are created on first boot **without a password**. To activate one:
 2. Enter the administrator email and request a setup code.
 3. In development the code is printed in the server log and echoed in the
    response (`devCode`) because `app.mail.expose-otp=true`. In production it is
-   emailed.
+   emailed. If SMTP is not configured yet, production writes the code to the
+   server log instead (on Render: **Logs** in the dashboard).
 4. Enter the 6-digit code and choose a password. The account becomes an active,
    verified original administrator.
 
@@ -150,20 +154,23 @@ All settings can be supplied as environment variables. The most important:
 | Variable | Purpose | Default |
 | --- | --- | --- |
 | `PORT` | HTTP port | `8080` |
-| `DB_URL` | JDBC URL | local `unilodge` database |
+| `DB_URL` | complete JDBC URL (overrides the discrete values) | local `unilodge` database |
+| `DB_HOST` / `DB_PORT` / `DB_NAME` | database host, port and name used to build the JDBC URL | `localhost` / `5432` / `unilodge` |
 | `DB_USERNAME` / `DB_PASSWORD` | database credentials | local dev values |
 | `JWT_SECRET` | token signing secret (32+ chars) | dev-only value |
 | `JWT_TTL_HOURS` | session lifetime | `168` |
-| `APP_URL` | public URL used in emails and links | `http://localhost:8080` |
-| `MAIL_MODE` | `console` or `smtp` | `console` |
+| `APP_URL` | public URL used in emails and links | `http://localhost:8080`; in `prod` falls back to `RENDER_EXTERNAL_URL` |
+| `MAIL_MODE` | `console` or `smtp` | `console` in dev, `smtp` in prod |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | SMTP delivery | — |
 | `UPLOAD_DIR` | photo storage directory | `./uploads` |
 | `GEOCODING_ENABLED` | OpenStreetMap/Nominatim lookups | `true` |
 | `CORS_ORIGINS` | extra allowed browser origins | localhost only |
 | `LOG_FILE` | production log path | `logs/unilodge.log` |
 
-Profiles: `dev` (default) and `prod`. The `prod` profile requires the database,
-JWT, mail and `APP_URL` variables listed in `application-prod.yml`.
+Profiles: `dev` (default) and `prod`. The `prod` profile requires the database
+and `JWT_SECRET` variables. If `MAIL_HOST` is empty, outgoing email is written
+to the server log instead of being sent, so the first administrator can still
+complete setup.
 
 Uploaded files are stored on disk under `UPLOAD_DIR` and served from
 `/api/files/**`. Back up that directory together with the database.
@@ -254,7 +261,31 @@ then restart the application; Flyway reapplies the migrations.
 
 ## 8. Production deployment
 
-### 8.1 Docker Compose (recommended)
+### 8.1 Render (recommended)
+
+The repository contains a Render Blueprint (`render.yaml`) that creates a
+Docker web service and a Render Postgres database in Frankfurt. It wires the
+database credentials into the application automatically and generates a
+`JWT_SECRET`.
+
+1. Sign in at <https://dashboard.render.com> with GitHub access to this
+   repository.
+2. Open the one-click deploy link:
+
+   <https://render.com/deploy?repo=https://github.com/La-Pulga-001/UniLodge>
+
+3. Apply the Blueprint. Enter SMTP values when prompted, or leave them blank
+   for now. The first build takes 5–10 minutes.
+4. Open the generated `https://unilodge-<hash>.onrender.com` address.
+5. Complete setup at `/admin-setup.html` for each original administrator.
+6. Add SMTP credentials in **Environment** as soon as possible, then set
+   `APP_URL` if you attach a custom domain.
+
+Free plans sleep when idle and free databases expire after 30 days. Uploaded
+photos need a paid instance with a disk. The full walkthrough, paid upgrade
+path and troubleshooting table are in [docs/RENDER.md](docs/RENDER.md).
+
+### 8.2 Docker Compose
 
 1. Copy `.env.example` to `.env` and fill in every value.
 2. Build and start:
@@ -275,7 +306,7 @@ Nginx, a cloud load balancer) in front of it and set `APP_URL` to the public
 HTTPS URL. Persist the `unilodge-db`, `unilodge-uploads` and `unilodge-logs`
 volumes.
 
-### 8.2 Plain server
+### 8.3 Plain server
 
 1. Install JDK 25 and PostgreSQL.
 2. Create the database and user.
@@ -310,17 +341,18 @@ tar czf uploads-$(date +%F).tar.gz /path/to/uploads
 After deployment, open `/admin-setup.html` once for each original
 administrator. Use a unique password and complete the email OTP step.
 
-### 8.3 First-run checklist
+### 8.4 First-run checklist
 
 - [ ] `JWT_SECRET` is long and random
 - [ ] Database password is not the development password
-- [ ] `APP_URL` is the public HTTPS address
+- [ ] `APP_URL` is the public HTTPS address (or Render's generated URL)
 - [ ] SMTP credentials are valid and `MAIL_FROM` is a real sender
 - [ ] `app.mail.expose-otp` is `false` (default in `prod`)
 - [ ] Demo data is disabled
 - [ ] Uploads and logs directories are writable and persisted
 - [ ] All three original admins completed setup
 - [ ] Backups are scheduled
+- [ ] On free Render: idle sleep, 30-day database expiry and no persistent disk are acceptable
 
 ---
 
@@ -346,7 +378,10 @@ the API.
 | Flyway validation error | drop/recreate the schema locally, or align migrations |
 | Hibernate schema validation failure | confirm Flyway ran and `ddl-auto` matches |
 | OTP email not received | check `MAIL_*` variables and spam folder; in dev read the console |
-| Images disappear after redeploy | `UPLOAD_DIR` must point at persistent storage |
+| Render service slow on first visit | free services sleep when idle; wait ~60 seconds |
+| Render database gone | free databases expire 30 days after creation; upgrade before expiry |
+| Render deploy fails health check | check runtime logs for datasource/Flyway errors; the database must be ready |
+| Images disappear after redeploy | `UPLOAD_DIR` must point at persistent storage (paid Render disk) |
 | Map empty | the Leaflet CDN or `GEOCODING_ENABLED` may be blocked; users can still pin manually |
 
 ---

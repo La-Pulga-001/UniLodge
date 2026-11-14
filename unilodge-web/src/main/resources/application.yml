@@ -11,7 +11,10 @@ spring:
   profiles:
     default: dev
   datasource:
-    url: ${DB_URL:jdbc:postgresql://localhost:5432/unilodge}
+    # DB_URL wins when set (Docker Compose, local overrides). Otherwise the
+    # URL is assembled from discrete host/port/name variables, which is what
+    # managed platforms such as Render provide.
+    url: ${DB_URL:jdbc:postgresql://${DB_HOST:localhost}:${DB_PORT:5432}/${DB_NAME:unilodge}}
     username: ${DB_USERNAME:unilodge_app}
     password: ${DB_PASSWORD:un1l0dge_local_2026}
     driver-class-name: org.postgresql.Driver

@@ -1,0 +1,2 @@
+# Keep container shell scripts LF-only so the shebang works on Linux.
+*.sh text eol=lf

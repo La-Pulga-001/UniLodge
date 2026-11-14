@@ -1,0 +1,90 @@
+# Render Blueprint for UniLodge.
+#
+# One-click deploy:
+#   https://render.com/deploy?repo=https://github.com/La-Pulga-001/UniLodge
+#
+# The Blueprint creates a Docker web service and a Render Postgres database in
+# Frankfurt (closest region to Ghana). The free plan is enough to demo the
+# platform. See docs/RENDER.md for the paid upgrade path (persistent uploads,
+# no idle sleep, non-expiring database).
+#
+# Render's database "connectionString" is a postgresql:// URL, which the
+# PostgreSQL JDBC driver cannot use directly. We therefore wire the discrete
+# host/port/database/user/password fields into the application instead.
+
+databases:
+  - name: unilodge-db
+    databaseName: unilodge
+    user: unilodge_app
+    plan: free
+    region: frankfurt
+
+services:
+  - type: web
+    name: unilodge
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/universities
+    autoDeployTrigger: commit
+    maxShutdownDelaySeconds: 30
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # Database. The application assembles the JDBC URL from these values.
+      - key: DB_HOST
+        fromDatabase:
+          name: unilodge-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: unilodge-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: unilodge-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: unilodge-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: unilodge-db
+          property: password
+
+      # Render generates a long random signing secret on first apply.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # APP_URL is not set: the production profile falls back to Render's
+      # RENDER_EXTERNAL_URL, which is the service's public https:// address.
+      # Uncomment and set this after attaching a custom domain:
+      # - key: APP_URL
+      #   value: https://unilodge.example.com
+
+      # SMTP. Enter these during Blueprint creation. If you skip them,
+      # UniLodge still runs and prints emails (including OTP codes) to the
+      # Render logs, so the first administrator can complete setup.
+      # The port defaults to 587; set MAIL_PORT in the dashboard if your
+      # provider uses a different port.
+      - key: MAIL_HOST
+        sync: false
+      - key: MAIL_USERNAME
+        sync: false
+      - key: MAIL_PASSWORD
+        sync: false
+      - key: MAIL_FROM
+        sync: false
+
+      # Uploaded photos live on the container filesystem. The free plan has no
+      # persistent disk, so uploads disappear on redeploy/restart. To keep
+      # them, upgrade the service to "starter" and uncomment the disk below
+      # (also change plan: free to plan: starter above).
+      # disk:
+      #   name: unilodge-uploads
+      #   mountPath: /app/uploads
+      #   sizeGB: 1

@@ -23,11 +23,13 @@ FROM eclipse-temurin:25-jre
 WORKDIR /app
 RUN groupadd --system unilodge && useradd --system --gid unilodge unilodge \
     && mkdir -p /app/uploads /app/logs && chown -R unilodge:unilodge /app
+COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh
 COPY --from=build /workspace/unilodge-web/target/unilodge-web-1.0.0.jar /app/unilodge.jar
-USER unilodge
 EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod \
     PORT=8080 \
     UPLOAD_DIR=/app/uploads \
     LOG_FILE=/app/logs/unilodge.log
-ENTRYPOINT ["java", "-jar", "/app/unilodge.jar"]
+# Starts as root, fixes mounted-disk ownership, then drops to "unilodge".
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

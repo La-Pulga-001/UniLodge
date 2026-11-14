@@ -1,12 +1,15 @@
 # Production profile. Everything sensitive comes from environment variables.
-# Required: DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET, APP_URL,
+# Required: DB credentials, JWT_SECRET.
+# Optional: APP_URL (falls back to Render's RENDER_EXTERNAL_URL),
 #           MAIL_HOST, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_FROM.
+# If no SMTP host is configured, emails (including OTP codes) are written to
+# the server log so the first administrator can still complete setup.
 spring:
   mail:
-    host: ${MAIL_HOST}
+    host: ${MAIL_HOST:}
     port: ${MAIL_PORT:587}
-    username: ${MAIL_USERNAME}
-    password: ${MAIL_PASSWORD}
+    username: ${MAIL_USERNAME:}
+    password: ${MAIL_PASSWORD:}
     properties:
       mail:
         smtp:
@@ -20,9 +23,9 @@ spring:
 
 app:
   mail:
-    mode: smtp
-    from: ${MAIL_FROM}
-    app-url: ${APP_URL}
+    mode: ${MAIL_MODE:smtp}
+    from: ${MAIL_FROM:no-reply@unilodge.local}
+    app-url: ${APP_URL:${RENDER_EXTERNAL_URL:http://localhost:8080}}
     expose-otp: false
   bootstrap:
     demo-data: false

@@ -6,7 +6,9 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
 
 import java.time.Duration;
 
@@ -113,23 +115,16 @@ public class EmailService {
 
     private void deliver(String to, String subject, String body) {
         if (properties.getMail().isConsoleMode()) {
-            log.info("""
-
-                    ============================================================
-                     UniLodge mail (console transport)
-                     To      : {}
-                     Subject : {}
-                    ------------------------------------------------------------
-                    {}
-                    ============================================================
-                    """, to, subject, body);
+            logToConsole(to, subject, body);
             return;
         }
 
         JavaMailSender sender = mailSenderProvider.getIfAvailable();
-        if (sender == null) {
-            throw new IllegalStateException(
-                    "SMTP mode is enabled but spring.mail.host is not configured.");
+        if (!isConfigured(sender)) {
+            log.warn("SMTP mode is enabled but no mail host is configured. "
+                    + "Logging the message instead; set MAIL_HOST to deliver real email.");
+            logToConsole(to, subject, body);
+            return;
         }
         SimpleMailMessage message = new SimpleMailMessage();
         message.setFrom(properties.getMail().getFrom());
@@ -137,5 +132,28 @@ public class EmailService {
         message.setSubject(subject);
         message.setText(body);
         sender.send(message);
+    }
+
+    private boolean isConfigured(JavaMailSender sender) {
+        if (sender == null) {
+            return false;
+        }
+        if (sender instanceof JavaMailSenderImpl implementation) {
+            return StringUtils.hasText(implementation.getHost());
+        }
+        return true;
+    }
+
+    private void logToConsole(String to, String subject, String body) {
+        log.info("""
+
+                ============================================================
+                 UniLodge mail (console transport)
+                 To      : {}
+                 Subject : {}
+                ------------------------------------------------------------
+                {}
+                ============================================================
+                """, to, subject, body);
     }
 }
