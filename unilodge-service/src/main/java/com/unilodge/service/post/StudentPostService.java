@@ -8,6 +8,7 @@ import com.unilodge.common.enums.UserRole;
 import com.unilodge.common.exception.BadRequestException;
 import com.unilodge.common.exception.ForbiddenException;
 import com.unilodge.common.exception.NotFoundException;
+import com.unilodge.common.exception.UnauthorizedException;
 import com.unilodge.persistence.entity.SavedStudentPost;
 import com.unilodge.persistence.entity.StudentPost;
 import com.unilodge.persistence.entity.User;
@@ -61,6 +62,7 @@ public class StudentPostService {
                                                 UUID authorId,
                                                 int page,
                                                 int size) {
+        requireBoardAccess(requester);
         Page<StudentPost> result = postRepository.findAll(
                 StudentPostSpecifications.withFilters(status, q, universityId, authorId),
                 PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 50),
@@ -78,6 +80,7 @@ public class StudentPostService {
 
     @Transactional(readOnly = true)
     public StudentPostDto getDetail(User requester, UUID id) {
+        requireBoardAccess(requester);
         StudentPost post = postRepository.findById(id)
                 .orElseThrow(() -> new NotFoundException("That student post could not be found."));
 
@@ -163,6 +166,7 @@ public class StudentPostService {
 
     @Transactional(readOnly = true)
     public List<StudentPostDto> savedPosts(User student) {
+        requireStudent(student);
         return savedRepository.findByUserIdOrderByCreatedAtDesc(student.getId()).stream()
                 .map(SavedStudentPost::getPost)
                 .filter(post -> post.getStatus() == ModerationStatus.VISIBLE)
@@ -173,6 +177,7 @@ public class StudentPostService {
 
     @Transactional(readOnly = true)
     public List<UUID> savedIdsFor(User student) {
+        requireStudent(student);
         return savedRepository.findByUserIdOrderByCreatedAtDesc(student.getId()).stream()
                 .map(saved -> saved.getPost().getId())
                 .toList();
@@ -183,6 +188,22 @@ public class StudentPostService {
             return Set.of();
         }
         return new HashSet<>(savedIdsFor(requester));
+    }
+
+    /** The board is a students-only space; administrators join to moderate it. */
+    private void requireBoardAccess(User requester) {
+        if (requester == null) {
+            throw new UnauthorizedException("Please sign in to view the student board.");
+        }
+        if (requester.getRole() != UserRole.STUDENT && requester.getRole() != UserRole.ADMIN) {
+            throw new ForbiddenException("The student board is only available to students.");
+        }
+    }
+
+    private void requireStudent(User user) {
+        if (user == null || user.getRole() != UserRole.STUDENT) {
+            throw new ForbiddenException("Only student accounts can use saved board posts.");
+        }
     }
 
     private Map<UUID, Long> commentCounts(List<StudentPost> posts) {

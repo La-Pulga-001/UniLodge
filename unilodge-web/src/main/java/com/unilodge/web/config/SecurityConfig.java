@@ -74,14 +74,11 @@ public class SecurityConfig {
                         .requestMatchers(HttpMethod.GET,
                                 "/api/posts/saved",
                                 "/api/posts/saved/ids").authenticated()
-                        // Public catalogue
+                        // Public catalogue. The student board is signed-in only.
                         .requestMatchers(HttpMethod.GET,
                                 "/api/universities",
                                 "/api/properties",
                                 "/api/properties/*",
-                                "/api/posts",
-                                "/api/posts/*",
-                                "/api/posts/*/comments",
                                 "/api/files/**",
                                 "/api/geo/**").permitAll()
                         // Administration

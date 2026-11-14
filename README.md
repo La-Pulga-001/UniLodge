@@ -196,11 +196,13 @@ Uploaded files are stored on disk under `UPLOAD_DIR` and served from
 - Contact landlords (phone, WhatsApp, email) when signed in
 
 **Landlord**
-- Everything a student can do, plus create and edit listings
+- Browse and search approved listings
+- Create and edit their own listings
 - Upload up to 10 photos per listing (JPEG, PNG or WebP, max 5 MB each)
 - Pin an exact location on the Leaflet/OpenStreetMap picker
 - Cannot publish until an administrator approves the landlord account
 - Every new or edited listing is reset to `PENDING_APPROVAL`
+- No access to saved homes or the student board; those are student-only spaces
 
 **Administrator**
 - View users and statistics

@@ -40,7 +40,7 @@
 
     async function loadComments() {
         try {
-            const result = await U.api("/api/posts/" + encodeURIComponent(id) + "/comments?size=50", { auth: false });
+            const result = await U.api("/api/posts/" + encodeURIComponent(id) + "/comments?size=50");
             renderComments(result.content || []);
         } catch (error) {
             const list = document.getElementById("comment-list");
@@ -141,7 +141,20 @@
             root.innerHTML = '<div class="empty"><strong>Post not found.</strong>Return to the <a href="posts.html">student board</a>.</div>';
             return;
         }
-        if (U.token()) me = await U.refreshMe() || me;
+        if (!U.token()) {
+            location.replace(U.loginUrl());
+            return;
+        }
+        me = await U.refreshMe() || me;
+        if (!me) {
+            U.goLogin();
+            return;
+        }
+        if (me.role === "LANDLORD") {
+            U.toast("The student board is for students only.", "warn");
+            location.replace("dashboard.html");
+            return;
+        }
         try {
             post = await U.api("/api/posts/" + encodeURIComponent(id));
             render(post);

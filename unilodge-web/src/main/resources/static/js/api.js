@@ -355,10 +355,18 @@
         return error && error.message ? error.message : "Something went wrong. Please try again.";
     }
 
+    function applyBoardVisibility(user) {
+        const landlord = !!user && user.role === "LANDLORD";
+        document.querySelectorAll('.main-nav a[href="posts.html"]').forEach((link) => {
+            link.hidden = landlord;
+        });
+    }
+
     function renderNav() {
         const target = document.getElementById("header-actions");
         if (!target) return;
         const user = currentUser();
+        applyBoardVisibility(user);
         if (!user) {
             target.innerHTML =
                 '<a class="sign-in-link" href="login.html">Sign in</a>' +
@@ -366,10 +374,11 @@
             return;
         }
         const admin = user.role === "ADMIN";
+        const landlord = user.role === "LANDLORD";
         const dashboard = admin ? "admin.html" : "dashboard.html";
         let menu = '<a href="' + dashboard + '"><span aria-hidden="true">▦</span> ' + (admin ? "Admin workspace" : "My dashboard") + "</a>" +
             '<a href="browse.html"><span aria-hidden="true">⌂</span> Browse listings</a>' +
-            '<a href="posts.html"><span aria-hidden="true">☷</span> Student board</a>' +
+            (landlord ? "" : '<a href="posts.html"><span aria-hidden="true">☷</span> Student board</a>') +
             '<a href="profile.html"><span aria-hidden="true">♙</span> My profile</a>';
         if (admin && !user.adminVerified) {
             menu = '<a href="admin-setup.html?verify=1"><span aria-hidden="true">!</span> Verify admin access</a>' + menu;

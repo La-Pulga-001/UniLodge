@@ -25,8 +25,9 @@ button:focus-visible, a:focus-visible, input:focus-visible { outline: 3px solid 
 .login-page {
     position: relative;
     min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+    /* Clip decorative glows without turning the page into a second scroller. */
+    overflow: hidden;
+    overflow: clip;
     display: grid;
     place-items: center;
     isolation: isolate;

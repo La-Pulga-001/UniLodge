@@ -107,6 +107,10 @@
             setTimeout(() => U.goLogin(), 650);
             return;
         }
+        if (me.role !== "STUDENT") {
+            U.toast("Only students can start a board post.", "warn");
+            return;
+        }
         const editing = !!post;
         const modal = U.openModal(
             '<button type="button" class="btn btn-icon btn-ghost" data-close style="position:absolute;top:13px;right:13px" aria-label="Close">×</button>' +
@@ -172,16 +176,29 @@
     document.getElementById("new-post-button").addEventListener("click", () => openEditor(null));
 
     async function init() {
-        me = U.currentUser();
+        if (!U.token()) {
+            location.replace(U.loginUrl());
+            return;
+        }
+        me = await U.refreshMe();
+        if (!me) {
+            U.goLogin();
+            return;
+        }
+        if (me.role === "LANDLORD") {
+            U.toast("The student board is for students only.", "warn");
+            location.replace("dashboard.html");
+            return;
+        }
+        if (me.role !== "STUDENT") {
+            document.getElementById("new-post-button").hidden = true;
+        }
         try {
             universities = await U.api("/api/universities", { auth: false });
             university.innerHTML = '<option value="">All universities</option>' +
                 universities.map((u) => '<option value="' + U.escapeHtml(u.id) + '">' + U.escapeHtml(u.name) + '</option>').join("");
         } catch (error) { universities = []; }
-        if (U.token()) {
-            savedIds = await U.api("/api/posts/saved/ids").catch(() => []);
-            U.refreshMe().then((user) => { me = user; }).catch(() => {});
-        }
+        savedIds = await U.api("/api/posts/saved/ids").catch(() => []);
         load();
         const editId = U.query("edit");
         if (editId && me) {

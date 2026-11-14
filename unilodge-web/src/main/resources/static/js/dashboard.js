@@ -18,10 +18,15 @@
         myListings: []
     };
 
-    const SECTIONS = ["overview", "saved-listings", "saved-posts", "my-posts", "my-listings"];
+    const STUDENT_SECTIONS = ["overview", "saved-listings", "saved-posts", "my-posts"];
+    const LANDLORD_SECTIONS = ["overview", "my-listings"];
 
     function isLandlord() {
         return me && me.role === "LANDLORD";
+    }
+
+    function allowedSections() {
+        return isLandlord() ? LANDLORD_SECTIONS : STUDENT_SECTIONS;
     }
 
     function listingStatusCount(status) {
@@ -114,7 +119,7 @@
             html += statCard("Total listings", state.myListings.length, "Homes you have published")
                 + statCard("Approved", listingStatusCount("APPROVED"), "Visible to students")
                 + statCard("Awaiting review", listingStatusCount("PENDING_APPROVAL"), "With administrators now")
-                + statCard("Saved homes", state.savedListings.length, "Places you bookmarked");
+                + statCard("Removed", listingStatusCount("REMOVED"), "Hidden from students");
         } else {
             html += statCard("Saved homes", state.savedListings.length, "Listings you bookmarked")
                 + statCard("Saved posts", state.savedPosts.length, "Conversations to revisit")
@@ -139,19 +144,21 @@
             html += '</div>';
         }
 
-        html += '<div class="dash-section"><div class="row-between"><h2>Saved for later</h2>' +
-            '<button type="button" class="btn btn-sm btn-ghost" data-goto="saved-listings">See all ' + state.savedListings.length + '</button></div>';
-        html += state.savedListings.length
-            ? '<div class="list-stack">' + state.savedListings.slice(0, 3).map(savedListingRow).join("") + '</div>'
-            : emptyState("No saved homes yet.", "Tap the heart on any listing to keep it here for later.", '<a class="btn btn-sm btn-primary" href="browse.html">Browse homes</a>');
-        html += '</div>';
+        if (!isLandlord()) {
+            html += '<div class="dash-section"><div class="row-between"><h2>Saved for later</h2>' +
+                '<button type="button" class="btn btn-sm btn-ghost" data-goto="saved-listings">See all ' + state.savedListings.length + '</button></div>';
+            html += state.savedListings.length
+                ? '<div class="list-stack">' + state.savedListings.slice(0, 3).map(savedListingRow).join("") + '</div>'
+                : emptyState("No saved homes yet.", "Tap the heart on any listing to keep it here for later.", '<a class="btn btn-sm btn-primary" href="browse.html">Browse homes</a>');
+            html += '</div>';
 
-        html += '<div class="dash-section"><div class="row-between"><h2>From the student board</h2>' +
-            '<button type="button" class="btn btn-sm btn-ghost" data-goto="saved-posts">Saved posts</button></div>';
-        html += state.savedPosts.length
-            ? '<div class="list-stack">' + state.savedPosts.slice(0, 3).map((post) => postRow(post, { mode: "saved" })).join("") + '</div>'
-            : emptyState("Nothing saved from the board.", "Save roommate requests and housing conversations to find them quickly again.", '<a class="btn btn-sm btn-outline" href="posts.html">Visit the student board</a>');
-        html += '</div>';
+            html += '<div class="dash-section"><div class="row-between"><h2>From the student board</h2>' +
+                '<button type="button" class="btn btn-sm btn-ghost" data-goto="saved-posts">Saved posts</button></div>';
+            html += state.savedPosts.length
+                ? '<div class="list-stack">' + state.savedPosts.slice(0, 3).map((post) => postRow(post, { mode: "saved" })).join("") + '</div>'
+                : emptyState("Nothing saved from the board.", "Save roommate requests and housing conversations to find them quickly again.", '<a class="btn btn-sm btn-outline" href="posts.html">Visit the student board</a>');
+            html += '</div>';
+        }
 
         return html;
     }
@@ -307,8 +314,7 @@
     }
 
     function show(next) {
-        if (!SECTIONS.includes(next)) next = "overview";
-        if (next === "my-listings" && !isLandlord()) next = "overview";
+        if (!allowedSections().includes(next)) next = "overview";
         section = next;
         history.replaceState(null, "", "dashboard.html#" + section);
         render();
@@ -327,15 +333,22 @@
     async function loadData() {
         content.innerHTML = '<div class="loading-line"><span class="spinner"></span> Loading your dashboard…</div>';
         try {
-            const [savedListings, savedPosts, myPosts] = await Promise.all([
-                U.api("/api/properties/saved").catch(() => []),
-                U.api("/api/posts/saved").catch(() => []),
-                U.api("/api/posts?authorId=" + encodeURIComponent(me.id) + "&size=50").catch(() => ({ content: [] }))
-            ]);
-            state.savedListings = savedListings || [];
-            state.savedPosts = savedPosts || [];
-            state.myPosts = myPosts.content || [];
-            await loadListings();
+            if (isLandlord()) {
+                state.savedListings = [];
+                state.savedPosts = [];
+                state.myPosts = [];
+                await loadListings();
+            } else {
+                const [savedListings, savedPosts, myPosts] = await Promise.all([
+                    U.api("/api/properties/saved").catch(() => []),
+                    U.api("/api/posts/saved").catch(() => []),
+                    U.api("/api/posts?authorId=" + encodeURIComponent(me.id) + "&size=50").catch(() => ({ content: [] }))
+                ]);
+                state.savedListings = savedListings || [];
+                state.savedPosts = savedPosts || [];
+                state.myPosts = myPosts.content || [];
+                state.myListings = [];
+            }
             render();
         } catch (error) {
             content.innerHTML = emptyState("We could not load your dashboard.", U.networkMessage(error),
@@ -352,7 +365,7 @@
 
         heading.textContent = "Welcome back, " + name.split(" ")[0];
         subheading.textContent = isLandlord()
-            ? "Manage your homes, follow their review status and keep track of saved places."
+            ? "Manage your homes and follow each one from review to approval."
             : "Keep track of saved homes, saved conversations and the posts you have started.";
 
         let actionHtml = '<a class="btn btn-outline" href="browse.html">Browse homes</a>';
@@ -365,7 +378,12 @@
         }
         actions.innerHTML = actionHtml;
 
-        document.getElementById("nav-my-listings").hidden = !isLandlord();
+        nav.querySelectorAll("[data-audience]").forEach((button) => {
+            button.hidden = button.dataset.audience !== (isLandlord() ? "landlord" : "student");
+        });
+        nav.querySelectorAll("[data-section]").forEach((button) => {
+            if (!allowedSections().includes(button.dataset.section)) button.hidden = true;
+        });
     }
 
     function bindNav() {
@@ -384,7 +402,7 @@
         paintProfile();
         bindNav();
         const initial = location.hash.replace("#", "");
-        if (SECTIONS.includes(initial) && (initial !== "my-listings" || isLandlord())) section = initial;
+        if (allowedSections().includes(initial)) section = initial;
         await loadData();
     }
 

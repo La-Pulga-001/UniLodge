@@ -230,7 +230,7 @@ Returns `PagedResponse<PropertySummaryDto>`.
 
 ### `GET /api/properties/featured` — public
 
-Up to the six most recent approved listings.
+Up to the eight most recent approved listings.
 
 ### `GET /api/properties/{id}` — public (contact data requires auth)
 
@@ -288,9 +288,10 @@ Returns `PropertyDto`:
 `PagedResponse<PropertySummaryDto>` for the signed-in landlord, defaults
 `page=0`, `size=50`.
 
-### `GET /api/properties/saved` and `/saved/ids` — authenticated
+### `GET /api/properties/saved` and `/saved/ids` — authenticated student
 
-Saved listings (full summaries) or just their IDs.
+Saved listings (full summaries) or just their IDs. Landlord and administrator
+accounts receive `403`.
 
 ### `POST /api/properties` — landlord
 
@@ -349,7 +350,10 @@ Toggles the saved state: `{ "saved": true }`.
 
 ## 5. Student posts and comments
 
-### `GET /api/posts` — public
+The board is a private student space. Every endpoint below requires a signed-in
+student or administrator; landlord accounts receive `403`.
+
+### `GET /api/posts` — signed-in student or administrator
 
 | Query | Type | Notes |
 | --- | --- | --- |
@@ -381,12 +385,12 @@ Returns `PagedResponse<StudentPostDto>`:
 }
 ```
 
-### `GET /api/posts/{id}` — public
+### `GET /api/posts/{id}` — signed-in student or administrator
 
 Returns one `StudentPostDto`. Hidden/removed posts are only visible to
 administrators and the author.
 
-### `POST /api/posts` — authenticated
+### `POST /api/posts` — student
 
 ```json
 {
@@ -403,11 +407,11 @@ administrators and the author.
 
 Update or remove your own post. Removal sets `REMOVED`.
 
-### `GET /api/posts/saved` and `/saved/ids` — authenticated
+### `GET /api/posts/saved` and `/saved/ids` — student
 
 Saved posts, or their IDs.
 
-### `POST /api/posts/{id}/save` — authenticated
+### `POST /api/posts/{id}/save` — student
 
 Toggles save state: `{ "saved": true }`.
 
@@ -415,8 +419,8 @@ Toggles save state: `{ "saved": true }`.
 
 | Method | Path | Auth | Body |
 | --- | --- | --- | --- |
-| GET | `/api/posts/{postId}/comments` | public | — → `PagedResponse<CommentDto>` |
-| POST | `/api/posts/{postId}/comments` | authenticated | `{ "body": "..." }` → `CommentDto` |
+| GET | `/api/posts/{postId}/comments` | student or admin | — → `PagedResponse<CommentDto>` |
+| POST | `/api/posts/{postId}/comments` | student or admin | `{ "body": "..." }` → `CommentDto` |
 | DELETE | `/api/comments/{commentId}` | author | — → `{ "message": "..." }` |
 
 Comment body: 1–2000 characters.

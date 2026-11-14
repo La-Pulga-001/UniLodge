@@ -103,7 +103,7 @@ public class PropertyService {
 
     @Transactional(readOnly = true)
     public List<PropertySummaryDto> featured() {
-        return propertyRepository.findTop9ByStatusOrderByCreatedAtDesc(ListingStatus.APPROVED)
+        return propertyRepository.findTop8ByStatusOrderByCreatedAtDesc(ListingStatus.APPROVED)
                 .stream().map(DtoMapper::summary).toList();
     }
 
@@ -141,6 +141,9 @@ public class PropertyService {
 
     @Transactional(readOnly = true)
     public PagedResponse<PropertySummaryDto> mine(User landlord, int page, int size) {
+        if (landlord.getRole() != UserRole.LANDLORD) {
+            throw new ForbiddenException("Only landlord accounts can manage listings.");
+        }
         Page<Property> result = propertyRepository.findByLandlordId(landlord.getId(),
                 PageRequest.of(Math.max(page, 0), Math.min(Math.max(size, 1), 100),
                         Sort.by(Sort.Direction.DESC, "createdAt")));
@@ -306,6 +309,7 @@ public class PropertyService {
 
     @Transactional(readOnly = true)
     public List<UUID> savedIds(User student) {
+        requireStudentAccount(student);
         return savedRepository.findByUserIdOrderByCreatedAtDesc(student.getId()).stream()
                 .map(saved -> saved.getProperty().getId())
                 .toList();
@@ -313,6 +317,7 @@ public class PropertyService {
 
     @Transactional(readOnly = true)
     public List<PropertySummaryDto> savedProperties(User student) {
+        requireStudentAccount(student);
         return savedRepository.findByUserIdOrderByCreatedAtDesc(student.getId()).stream()
                 .map(SavedProperty::getProperty)
                 .filter(property -> property.getStatus() == ListingStatus.APPROVED)
@@ -323,6 +328,12 @@ public class PropertyService {
     // ------------------------------------------------------------------
     // Helpers
     // ------------------------------------------------------------------
+
+    private void requireStudentAccount(User user) {
+        if (user.getRole() != UserRole.STUDENT) {
+            throw new ForbiddenException("Only student accounts can save listings.");
+        }
+    }
 
     private void requireActiveLandlord(User landlord) {
         if (landlord.getRole() != UserRole.LANDLORD) {

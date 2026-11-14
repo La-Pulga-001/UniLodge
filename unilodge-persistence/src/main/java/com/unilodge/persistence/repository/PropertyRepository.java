@@ -27,7 +27,7 @@ public interface PropertyRepository extends JpaRepository<Property, UUID>, JpaSp
 
     long countByLandlordIdAndStatus(UUID landlordId, ListingStatus status);
 
-    List<Property> findTop9ByStatusOrderByCreatedAtDesc(ListingStatus status);
+    List<Property> findTop8ByStatusOrderByCreatedAtDesc(ListingStatus status);
 
     @Transactional
     @Modifying

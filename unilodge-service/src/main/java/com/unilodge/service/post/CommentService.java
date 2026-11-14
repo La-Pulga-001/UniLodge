@@ -8,6 +8,7 @@ import com.unilodge.common.enums.UserRole;
 import com.unilodge.common.exception.BadRequestException;
 import com.unilodge.common.exception.ForbiddenException;
 import com.unilodge.common.exception.NotFoundException;
+import com.unilodge.common.exception.UnauthorizedException;
 import com.unilodge.persistence.entity.Comment;
 import com.unilodge.persistence.entity.StudentPost;
 import com.unilodge.persistence.entity.User;
@@ -37,6 +38,7 @@ public class CommentService {
 
     @Transactional(readOnly = true)
     public PagedResponse<CommentDto> list(User requester, UUID postId, int page, int size) {
+        requireBoardAccess(requester);
         StudentPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("That student post could not be found."));
 
@@ -59,14 +61,11 @@ public class CommentService {
 
     @Transactional
     public CommentDto add(User author, UUID postId, CommentRequest request) {
+        requireBoardAccess(author);
         StudentPost post = postRepository.findById(postId)
                 .orElseThrow(() -> new NotFoundException("That student post could not be found."));
         if (post.getStatus() != ModerationStatus.VISIBLE) {
             throw new BadRequestException("You cannot comment on a post that is not visible.");
-        }
-        if (author.getRole() != UserRole.STUDENT && author.getRole() != UserRole.LANDLORD
-                && author.getRole() != UserRole.ADMIN) {
-            throw new ForbiddenException("Only signed-in members can comment.");
         }
         Comment comment = new Comment();
         comment.setPost(post);
@@ -79,6 +78,7 @@ public class CommentService {
 
     @Transactional
     public void removeOwn(User author, UUID commentId) {
+        requireBoardAccess(author);
         Comment comment = commentRepository.findById(commentId)
                 .orElseThrow(() -> new NotFoundException("That comment could not be found."));
         boolean isAuthor = comment.getAuthor().getId().equals(author.getId());
@@ -88,5 +88,15 @@ public class CommentService {
         }
         comment.setStatus(ModerationStatus.REMOVED);
         commentRepository.save(comment);
+    }
+
+    /** Only students and administrators can read or take part in board conversations. */
+    private void requireBoardAccess(User requester) {
+        if (requester == null) {
+            throw new UnauthorizedException("Please sign in to view the student board.");
+        }
+        if (requester.getRole() != UserRole.STUDENT && requester.getRole() != UserRole.ADMIN) {
+            throw new ForbiddenException("The student board is only available to students.");
+        }
     }
 }
