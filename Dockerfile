@@ -21,7 +21,11 @@ RUN mvn -B -DskipTests package
 # ---- Runtime stage ---------------------------------------------------------
 FROM eclipse-temurin:25-jre
 WORKDIR /app
-RUN groupadd --system unilodge && useradd --system --gid unilodge unilodge \
+# fontconfig and DejaVu fonts let the demo seeder render placeholder photos.
+RUN apt-get update \
+    && apt-get install -y --no-install-recommends fontconfig fonts-dejavu-core \
+    && rm -rf /var/lib/apt/lists/* \
+    && groupadd --system unilodge && useradd --system --gid unilodge unilodge \
     && mkdir -p /app/uploads /app/logs && chown -R unilodge:unilodge /app
 COPY docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 RUN chmod 0755 /usr/local/bin/docker-entrypoint.sh
@@ -30,6 +34,7 @@ EXPOSE 8080
 ENV SPRING_PROFILES_ACTIVE=prod \
     PORT=8080 \
     UPLOAD_DIR=/app/uploads \
-    LOG_FILE=/app/logs/unilodge.log
+    LOG_FILE=/app/logs/unilodge.log \
+    JAVA_TOOL_OPTIONS="-Djava.awt.headless=true"
 # Starts as root, fixes mounted-disk ownership, then drops to "unilodge".
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]

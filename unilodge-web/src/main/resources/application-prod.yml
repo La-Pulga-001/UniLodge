@@ -28,7 +28,10 @@ app:
     app-url: ${APP_URL:${RENDER_EXTERNAL_URL:http://localhost:8080}}
     expose-otp: false
   bootstrap:
-    demo-data: false
+    # This deployment is a public demo, so sample accounts, 18 listings and
+    # student-board posts are seeded by default. Set DEMO_DATA=false to serve
+    # an empty production catalogue instead.
+    demo-data: ${DEMO_DATA:true}
   cors:
     allowed-origins: ${CORS_ORIGINS:}
 

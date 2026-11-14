@@ -102,16 +102,25 @@ Open <http://localhost:8081/>.
 > public address also set `APP_URL`, because it is used in OTP and invitation
 > links.
 
-### 3.4 Demo accounts (development profile only)
+### 3.4 Demo accounts and sample content
 
 | Role | Email | Password |
 | --- | --- | --- |
 | Student | `kwame.student@unilodge.test` | `Demo@1234` |
+| Student | `abena.student@unilodge.test` | `Demo@1234` |
+| Student | `yaw.student@unilodge.test` | `Demo@1234` |
 | Approved landlord | `ama.landlord@unilodge.test` | `Demo@1234` |
 | Pending landlord | `kofi.landlord@unilodge.test` | `Demo@1234` |
 
-Demo data is controlled by `app.bootstrap.demo-data` and is disabled in
-production.
+Demo data is controlled by `app.bootstrap.demo-data`, or the `DEMO_DATA`
+environment variable in production. When enabled the seeder creates 18
+approved listings (9 shown on the home page), one pending listing for the
+approval workflow, and a set of student-board posts and comments.
+
+`render.yaml` sets `DEMO_DATA=true` so the public Render demo has content.
+Set it to `false` for an empty production catalogue. Seeding is idempotent:
+restarting the service does not duplicate rows, and missing demo photos are
+regenerated after an ephemeral-container restart.
 
 ### 3.5 First administrator setup
 

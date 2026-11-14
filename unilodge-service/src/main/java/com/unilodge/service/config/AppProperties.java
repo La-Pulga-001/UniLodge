@@ -162,7 +162,7 @@ public class AppProperties {
                 "ayensusamuel866@gmail.com",
                 "deiyeshua05@gmail.com"
         ));
-        /** Development only: seed landlords, listings, posts and comments. */
+        /** Seed demo accounts, listings, posts and comments. */
         private boolean demoData = false;
 
         public List<String> getAdminEmails() {

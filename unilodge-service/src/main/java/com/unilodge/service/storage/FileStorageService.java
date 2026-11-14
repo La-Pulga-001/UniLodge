@@ -68,12 +68,39 @@ public class FileStorageService {
 
     /** Used by the demo data seeder to create placeholder listing photos. */
     public String storeSeedImage(byte[] pngBytes) {
-        String fileName = UUID.randomUUID() + ".png";
+        return storeSeedImage(pngBytes, UUID.randomUUID() + ".png");
+    }
+
+    /**
+     * Writes a demo photo under a deterministic name so it can be regenerated
+     * after an ephemeral container filesystem is reset.
+     */
+    public String storeSeedImage(byte[] pngBytes, String fileName) {
+        Path target = propertyImages.resolve(fileName).normalize();
+        if (!target.startsWith(propertyImages)) {
+            throw new IllegalArgumentException("Invalid seed image name");
+        }
         try {
-            Files.write(propertyImages.resolve(fileName), pngBytes);
+            Files.write(target, pngBytes);
             return fileName;
         } catch (IOException exception) {
             throw new IllegalStateException("Unable to write seed image", exception);
+        }
+    }
+
+    /** True when a demo photo still exists on disk and has content. */
+    public boolean seedImageExists(String fileName) {
+        if (fileName == null || fileName.isBlank()) {
+            return false;
+        }
+        Path target = propertyImages.resolve(fileName).normalize();
+        if (!target.startsWith(propertyImages)) {
+            return false;
+        }
+        try {
+            return Files.isRegularFile(target) && Files.size(target) > 0;
+        } catch (IOException exception) {
+            return false;
         }
     }
 

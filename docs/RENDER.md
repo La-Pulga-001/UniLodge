@@ -50,6 +50,25 @@ When the deploy finishes, Render shows the public URL:
 `https://unilodge-<hash>.onrender.com`. Open it — the catalogue should load
 with Palm University College.
 
+### Demo content
+
+The Blueprint sets `DEMO_DATA=true`, so the first boot seeds 18 approved
+listings (9 of them on the home page), one pending listing for the admin
+approval flow, and student-board posts with comments. Demo logins use the
+password `Demo@1234`:
+
+| Role | Email |
+| --- | --- |
+| Student | `kwame.student@unilodge.test` |
+| Student | `abena.student@unilodge.test` |
+| Student | `yaw.student@unilodge.test` |
+| Approved landlord | `ama.landlord@unilodge.test` |
+| Pending landlord | `kofi.landlord@unilodge.test` |
+
+Set `DEMO_DATA=false` in **Environment** and redeploy for an empty
+catalogue. Seeding is idempotent; demo photos are regenerated
+automatically when the free service restarts.
+
 ---
 
 ## 2. Configure email (recommended)

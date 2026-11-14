@@ -69,6 +69,7 @@ app:
       - fblesselikem@gmail.com
       - ayensusamuel866@gmail.com
       - deiyeshua05@gmail.com
+    # Overridden by the dev and prod profiles.
     demo-data: false
   geocoding:
     enabled: ${GEOCODING_ENABLED:true}

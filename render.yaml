@@ -59,6 +59,12 @@ services:
       - key: JWT_SECRET
         generateValue: true
 
+      # Seed the demo accounts, 18 sample listings and student-board posts.
+      # Demo logins use the password Demo@1234; see README.md. Set this to
+      # false if you want an empty production catalogue instead.
+      - key: DEMO_DATA
+        value: "true"
+
       # APP_URL is not set: the production profile falls back to Render's
       # RENDER_EXTERNAL_URL, which is the service's public https:// address.
       # Uncomment and set this after attaching a custom domain:
