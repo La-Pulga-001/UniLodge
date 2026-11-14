@@ -1,0 +1,187 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#142b2a">
+    <meta name="description" content="Sign in or create your UniLodge student or landlord account.">
+    <title>Sign in | UniLodge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/auth-extra.css">
+</head>
+<body>
+    <main class="login-page">
+        <div class="ambient ambient-one" aria-hidden="true"></div>
+        <div class="ambient ambient-two" aria-hidden="true"></div>
+
+        <div class="login-shell">
+            <section class="welcome-panel" aria-labelledby="welcome-title">
+                <a class="brand" href="index.html" aria-label="UniLodge home">
+                    <span class="brand-mark" aria-hidden="true">
+                        <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </span>
+                    <span>Uni<span class="brand-light">Lodge</span></span>
+                </a>
+
+                <div class="welcome-copy">
+                    <svg class="welcome-logo" viewBox="0 0 36 36" fill="none" role="img" aria-label="UniLodge">
+                        <rect width="36" height="36" rx="11" fill="rgba(255,255,255,.13)"/>
+                        <path d="m7 16 11-8.5L29 16v12a1 1 0 0 1-1 1H8a1 1 0 0 1-1-1V16Z" stroke="#D7EBC8" stroke-width="1.8" stroke-linejoin="round"/>
+                        <path d="M14 29v-8h8v8" stroke="#D7EBC8" stroke-width="1.8" stroke-linecap="round"/>
+                    </svg>
+                    <h1 id="welcome-title">Your next chapter starts <span>here.</span></h1>
+                    <p>Sign in to pick up your search, revisit saved stays, and get one step closer to a place of your own.</p>
+                </div>
+
+                <div class="welcome-note">
+                    <span class="note-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
+                    </span>
+                    <span><strong>Find your corner of campus life</strong><small>Thoughtful stays, closer to what matters.</small></span>
+                </div>
+            </section>
+
+            <section class="login-card" aria-labelledby="auth-title">
+                <a class="back-link" href="index.html"><span aria-hidden="true">←</span> Back to exploring</a>
+                <div class="card-heading">
+                    <span class="card-kicker" id="auth-kicker">WELCOME BACK</span>
+                    <h2 id="auth-title">Sign in to your account</h2>
+                    <p id="auth-description">Good to have you back. Let’s find where you left off.</p>
+                </div>
+
+                <div class="step-dots" id="auth-steps" hidden>
+                    <span class="is-active" data-step="1"></span>
+                    <span data-step="2"></span>
+                    <span data-step="3"></span>
+                    <small id="auth-step-label">STEP 1 OF 3</small>
+                </div>
+
+                <form class="login-form" id="login-form" method="post" action="login.html" novalidate>
+                    <label class="form-field" id="full-name-field" for="full-name" hidden>
+                        <span>Full name</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="12" cy="8" r="3.5" stroke="currentColor" stroke-width="1.7"/><path d="M5 20c.6-3.2 3.2-5 7-5s6.4 1.8 7 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="full-name" name="fullName" type="text" placeholder="Your full name" autocomplete="name" minlength="2" maxlength="80">
+                        </span>
+                    </label>
+
+                    <div class="role-field" id="role-field" hidden>
+                        <span class="role-field-label">I’m joining as a</span>
+                        <div class="role-choices" role="radiogroup" aria-label="Choose your account type">
+                            <label class="role-choice">
+                                <input type="radio" name="role" value="STUDENT" checked>
+                                <span class="role-choice-card">
+                                    <span class="role-choice-icon" aria-hidden="true">⌕</span>
+                                    <span><strong>Student</strong><small>Find a place to live</small></span>
+                                    <span class="role-choice-check" aria-hidden="true"></span>
+                                </span>
+                            </label>
+                            <label class="role-choice">
+                                <input type="radio" name="role" value="LANDLORD">
+                                <span class="role-choice-card">
+                                    <span class="role-choice-icon" aria-hidden="true">⌂</span>
+                                    <span><strong>Landlord</strong><small>List a property</small></span>
+                                    <span class="role-choice-check" aria-hidden="true"></span>
+                                </span>
+                            </label>
+                        </div>
+                        <p class="role-admin-note">Landlord accounts are reviewed by an administrator before listings can be published.</p>
+                    </div>
+
+                    <label class="form-field" id="phone-field" for="phone" hidden>
+                        <span>Phone <span class="field-optional">optional</span></span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M6.5 3.5h3l1.5 4-2 1.5a13 13 0 0 0 6 6l1.5-2 4 1.5v3a2 2 0 0 1-2.2 2A17.5 17.5 0 0 1 4.5 5.7 2 2 0 0 1 6.5 3.5Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/></svg>
+                            <input id="phone" name="phone" type="tel" placeholder="+233 24 000 0000" autocomplete="tel" maxlength="40">
+                        </span>
+                    </label>
+
+                    <label class="form-field" id="university-field" for="university" hidden>
+                        <span>University or campus</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
+                            <select id="university" name="universityId" class="select-plain">
+                                <option value="">Choose a university</option>
+                            </select>
+                        </span>
+                    </label>
+
+                    <label class="form-field" id="business-field" for="business-name" hidden>
+                        <span>Business name <span class="field-optional">optional</span></span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M4 9h16v10a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9Z" stroke="currentColor" stroke-width="1.7"/><path d="M9 9V6.5A1.5 1.5 0 0 1 10.5 5h3A1.5 1.5 0 0 1 15 6.5V9" stroke="currentColor" stroke-width="1.7"/></svg>
+                            <input id="business-name" name="businessName" type="text" placeholder="e.g. Ama Student Homes" maxlength="120">
+                        </span>
+                    </label>
+
+                    <label class="form-field" for="email">
+                        <span>Email address</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="email" name="email" type="email" placeholder="you@example.com" autocomplete="email" required maxlength="160">
+                        </span>
+                    </label>
+
+                    <label class="form-field" for="password" id="password-field">
+                        <span id="password-label">Password</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="password" name="password" type="password" placeholder="At least 8 characters" autocomplete="current-password" minlength="8" maxlength="72">
+                        </span>
+                    </label>
+
+                    <label class="form-field" id="confirm-field" for="confirm-password" hidden>
+                        <span>Confirm password</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="confirm-password" type="password" placeholder="Repeat your password" autocomplete="new-password" minlength="8" maxlength="72">
+                        </span>
+                    </label>
+
+                    <label class="form-field otp-field" id="otp-field" for="otp-code" hidden>
+                        <span>Verification code</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="4" y="11" width="16" height="9" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
+                            <input id="otp-code" type="text" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                        </span>
+                    </label>
+
+                    <div class="otp-actions" id="otp-actions" hidden>
+                        <small id="otp-hint">The code expires in 10 minutes.</small>
+                        <button class="link-button" type="button" id="resend-code">Resend code</button>
+                    </div>
+
+                    <div class="form-options" id="login-options">
+                        <label class="remember-option">
+                            <input type="checkbox" checked>
+                            <span class="custom-check" aria-hidden="true"></span>
+                            Keep me signed in
+                        </label>
+                        <button class="text-link forgot-password-button" type="button" id="forgot-link"><span class="forgot-icon">?</span> Forgot password?</button>
+                    </div>
+
+                    <p class="form-status" id="auth-status" role="status" aria-live="polite" hidden></p>
+                    <div class="auth-dev-code" id="dev-code" hidden></div>
+
+                    <button class="submit-button" type="submit" id="auth-submit">Sign in <span aria-hidden="true">→</span></button>
+
+                    <div class="form-divider" id="admin-divider">ADMINISTRATOR</div>
+                    <a class="auth-helper" id="admin-link" href="admin-setup.html" style="text-align:center">Original administrator or invited admin? Set up your account →</a>
+                </form>
+
+                <div class="card-footer">
+                    <span class="footer-rule" aria-hidden="true"></span>
+                    <p id="auth-toggle-text">New to UniLodge? <button class="auth-mode-toggle" type="button" id="auth-toggle">Create an account</button></p>
+                </div>
+                <p class="page-caption">UniLodge <span>· student accommodation, Ghana</span></p>
+            </section>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/auth.js"></script>
+</body>
+</html>

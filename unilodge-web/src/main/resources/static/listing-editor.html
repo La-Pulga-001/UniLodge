@@ -1,0 +1,189 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f7f2">
+    <meta name="description" content="Create or edit a UniLodge student accommodation listing.">
+    <title>Listing editor | UniLodge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="UniLodge home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="browse.html">Find a place</a>
+            <a href="posts.html">Student board</a>
+            <a href="index.html#how-it-works">How it works</a>
+        </nav>
+        <div class="header-actions" id="header-actions">
+            <a class="sign-in-link" href="login.html">Sign in</a>
+            <a class="header-button" href="browse.html">Explore rooms <span aria-hidden="true">↗</span></a>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <div class="page-heading">
+            <div>
+                <span class="kicker">LANDLORD WORKSPACE</span>
+                <h1 id="editor-title">Add a new listing</h1>
+                <p id="editor-sub">Tell students about your home. Every listing is reviewed by a UniLodge administrator before it goes live.</p>
+            </div>
+            <a class="btn btn-ghost" href="dashboard.html#my-listings">← Back to dashboard</a>
+        </div>
+
+        <div id="editor-status"></div>
+
+        <div class="editor-layout" id="editor-layout" hidden>
+            <form class="form-card" id="listing-form" novalidate>
+                <div class="panel-head">
+                    <div><h2>Home details</h2><p>Clear, honest details help students decide quickly.</p></div>
+                </div>
+
+                <div class="form-grid">
+                    <label class="field span-2">Listing title
+                        <input class="input" id="f-title" maxlength="120" placeholder="e.g. Furnished single room 10 minutes from Palm University">
+                    </label>
+                    <label class="field span-2">Description
+                        <textarea class="textarea" id="f-description" maxlength="4000" placeholder="Describe the room, the neighbourhood, water and power supply, security and anything a student should know."></textarea>
+                    </label>
+                    <label class="field">University
+                        <select class="select" id="f-university"></select>
+                    </label>
+                    <label class="field">Property type
+                        <select class="select" id="f-type">
+                            <option value="SINGLE_ROOM">Single room</option>
+                            <option value="SELF_CONTAINED">Self-contained</option>
+                            <option value="STUDIO">Studio</option>
+                            <option value="APARTMENT">Apartment</option>
+                            <option value="SHARED_HOUSE">Shared house</option>
+                            <option value="HOSTEL">Hostel</option>
+                        </select>
+                    </label>
+                    <label class="field">Monthly rent (GH₵)
+                        <input class="input" id="f-rent" type="number" min="0" step="50" placeholder="1200">
+                    </label>
+                    <label class="field">Furnishing
+                        <select class="select" id="f-furnished">
+                            <option value="FURNISHED">Furnished</option>
+                            <option value="SEMI_FURNISHED">Semi-furnished</option>
+                            <option value="UNFURNISHED">Unfurnished</option>
+                        </select>
+                    </label>
+                    <label class="field">Bedrooms
+                        <input class="input" id="f-bedrooms" type="number" min="0" max="20" value="1">
+                    </label>
+                    <label class="field">Bathrooms
+                        <input class="input" id="f-bathrooms" type="number" min="0" max="20" value="1">
+                    </label>
+                </div>
+
+                <div class="detail-section">
+                    <h2>Location</h2>
+                    <div class="form-grid">
+                        <label class="field span-2">Street address
+                            <input class="input" id="f-address" maxlength="200" placeholder="e.g. 14 Estate Road, Shai Hills">
+                        </label>
+                        <label class="field">City / town
+                            <input class="input" id="f-city" maxlength="120" placeholder="Shai Hills">
+                        </label>
+                        <label class="field">Region <span class="optional">optional</span>
+                            <input class="input" id="f-region" maxlength="120" placeholder="Greater Accra">
+                        </label>
+                    </div>
+                    <input type="hidden" id="f-latitude">
+                    <input type="hidden" id="f-longitude">
+                    <p class="help">Use the map on the right to drop a pin. Students see an approximate location, not your exact address.</p>
+                </div>
+
+                <div class="detail-section">
+                    <h2>Price and lease</h2>
+                    <div class="form-grid">
+                        <label class="field">Available from
+                            <input class="input" id="f-move-in" type="date">
+                        </label>
+                        <label class="field">Lease terms <span class="optional">optional</span>
+                            <input class="input" id="f-lease" maxlength="500" placeholder="e.g. 12 months, one month deposit">
+                        </label>
+                        <div class="field span-2">
+                            <span>Options</span>
+                            <div class="row" style="gap:18px">
+                                <label class="inline-check"><input type="checkbox" id="f-negotiable"> Rent is negotiable</label>
+                                <label class="inline-check"><input type="checkbox" id="f-utilities"> Utilities included</label>
+                            </div>
+                        </div>
+                        <label class="field span-2" id="utilities-field" hidden>Which utilities are included?
+                            <input class="input" id="f-utilities-description" maxlength="300" placeholder="e.g. Water and electricity">
+                        </label>
+                        <label class="field span-2">Amenities <span class="optional">separate with commas</span>
+                            <input class="input" id="f-amenities" placeholder="Wi-Fi, running water, security, parking">
+                        </label>
+                    </div>
+                </div>
+
+                <p class="field-error" id="form-error" hidden></p>
+                <div class="form-actions">
+                    <button class="btn btn-primary" type="submit" id="save-button">Submit for review</button>
+                    <a class="btn btn-ghost" href="dashboard.html#my-listings">Cancel</a>
+                </div>
+            </form>
+
+            <aside class="stack" style="position:sticky;top:18px">
+                <section class="panel">
+                    <div class="panel-head"><div><h3>Pin the location</h3><p>Search an address or tap the map.</p></div></div>
+                    <label class="field">Find the address
+                        <input class="input" id="geo-q" type="search" placeholder="e.g. Palm University, Shai Hills">
+                    </label>
+                    <button class="btn btn-outline btn-block" type="button" id="geo-search" style="margin-top:8px">Search address</button>
+                    <div class="geo-results" id="geo-results"></div>
+                    <div class="map-picker" id="map-picker" style="margin-top:10px"></div>
+                    <p class="help" id="coord-label" style="margin-top:7px">No pin dropped yet.</p>
+                </section>
+
+                <section class="panel" id="images-panel">
+                    <div class="panel-head"><div><h3>Photos</h3><p>Up to 10 · JPEG, PNG or WebP · 5 MB each</p></div></div>
+                    <div class="upload-grid" id="image-grid"></div>
+                    <p class="help" id="image-empty">Photos make a big difference. You can add them after saving the listing.</p>
+                    <p class="help" id="upload-note" hidden></p>
+                    <div class="upload-drop">
+                        <span id="upload-caption">Choose photos from your device.</span><br>
+                        <label for="image-input">Browse files</label>
+                        <input id="image-input" type="file" accept="image/jpeg,image/png,image/webp" multiple>
+                    </div>
+                </section>
+
+                <div class="alert alert-info">
+                    <span><strong>Before you publish</strong>UniLodge does not handle rent or deposits. Students contact you directly, so keep your phone and email up to date in your profile.</span>
+                </div>
+            </aside>
+        </div>
+
+        <div class="empty" id="editor-message" hidden></div>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <p>Helping students find a place to call home in Ghana.</p>
+        <span class="copyright">© 2026 UniLodge · Palm University College · Shai Hills</span>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/listing-editor.js"></script>
+</body>
+</html>

@@ -1,0 +1,90 @@
+server:
+  port: ${PORT:8080}
+  compression:
+    enabled: true
+    mime-types: text/html,text/css,application/javascript,application/json,image/svg+xml
+  forward-headers-strategy: framework
+
+spring:
+  application:
+    name: unilodge
+  profiles:
+    default: dev
+  datasource:
+    url: ${DB_URL:jdbc:postgresql://localhost:5432/unilodge}
+    username: ${DB_USERNAME:unilodge_app}
+    password: ${DB_PASSWORD:un1l0dge_local_2026}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: 10
+      minimum-idle: 2
+      connection-timeout: 10000
+  jpa:
+    open-in-view: false
+    hibernate:
+      ddl-auto: validate
+    properties:
+      hibernate:
+        jdbc:
+          time_zone: UTC
+        order_inserts: true
+        order_updates: true
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
+  servlet:
+    multipart:
+      max-file-size: 5MB
+      max-request-size: 25MB
+  jackson:
+    default-property-inclusion: non_null
+    serialization:
+      write-dates-as-timestamps: false
+  web:
+    resources:
+      cache:
+        period: 0
+
+app:
+  jwt:
+    secret: ${JWT_SECRET:dev-only-change-me-unilodge-secret-key-0123456789}
+    ttl-hours: ${JWT_TTL_HOURS:168}
+    issuer: unilodge
+  mail:
+    mode: ${MAIL_MODE:console}
+    from: ${MAIL_FROM:no-reply@unilodge.local}
+    app-url: ${APP_URL:http://localhost:8080}
+    expose-otp: false
+  upload:
+    dir: ${UPLOAD_DIR:./uploads}
+    max-image-bytes: 5242880
+    max-avatar-bytes: 2097152
+    max-images-per-property: 10
+  bootstrap:
+    admin-emails:
+      - fblesselikem@gmail.com
+      - ayensusamuel866@gmail.com
+      - deiyeshua05@gmail.com
+    demo-data: false
+  geocoding:
+    enabled: ${GEOCODING_ENABLED:true}
+    base-url: https://nominatim.openstreetmap.org
+    user-agent: "UniLodge/1.0 (student housing platform; contact: support@unilodge.local)"
+  cors:
+    allowed-origins: []
+
+springdoc:
+  api-docs:
+    path: /v3/api-docs
+  swagger-ui:
+    path: /swagger-ui.html
+    operations-sorter: method
+    tags-sorter: alpha
+  default-produces-media-type: application/json
+
+logging:
+  level:
+    root: INFO
+    com.unilodge: INFO
+    org.flywaydb: INFO

@@ -1,0 +1,83 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f5f7f3">
+    <meta name="description" content="UniLodge administrator workspace for moderation, accounts and governance.">
+    <title>Admin workspace | UniLodge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/app.css">
+    <link rel="stylesheet" href="/css/admin.css">
+    <link rel="stylesheet" href="/css/admin-extra.css">
+</head>
+<body class="admin-body">
+    <div class="admin-shell">
+        <aside class="admin-sidebar">
+            <a class="brand admin-brand" href="index.html" aria-label="UniLodge home">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                </span>
+                <span>Uni<span class="brand-light">Lodge</span></span>
+            </a>
+
+            <div class="admin-workspace">
+                <span class="admin-workspace-mark">PU</span>
+                <span><strong>Palm University College</strong><small>Shai Hills · Greater Accra</small></span>
+            </div>
+
+            <nav class="admin-nav" id="admin-nav" aria-label="Admin sections">
+                <span class="admin-nav-label">WORKSPACE</span>
+                <button type="button" data-view="overview" class="is-active"><span aria-hidden="true">▦</span> Overview</button>
+                <button type="button" data-view="properties"><span aria-hidden="true">⌂</span> Listings <span class="admin-nav-count" id="nav-properties-count" hidden></span></button>
+                <button type="button" data-view="posts"><span aria-hidden="true">☷</span> Student posts</button>
+                <button type="button" data-view="users"><span aria-hidden="true">♙</span> User accounts <span class="admin-nav-count" id="nav-users-count" hidden></span></button>
+                <button type="button" data-view="admins"><span aria-hidden="true">♜</span> Administrators</button>
+                <button type="button" data-view="audit"><span aria-hidden="true">≡</span> Audit trail</button>
+                <button type="button" data-view="universities"><span aria-hidden="true">☆</span> Institutions</button>
+            </nav>
+
+            <div class="admin-sidebar-footer">
+                <div class="admin-identity" id="admin-identity">
+                    <span class="admin-avatar">UL</span>
+                    <span><strong>Loading…</strong><small>Administrator</small></span>
+                </div>
+                <button type="button" class="admin-logout" id="admin-logout"><span aria-hidden="true">↪</span> Sign out</button>
+                <a class="admin-back-home" href="index.html">← Back to UniLodge</a>
+            </div>
+        </aside>
+
+        <div class="admin-main">
+            <div class="admin-topbar">
+                <div>
+                    <span class="admin-topbar-label" id="topbar-label">OVERVIEW</span>
+                    <span class="admin-topbar-location">Palm University College · Shai Hills</span>
+                </div>
+                <span class="admin-live"><i></i> Signed in as administrator</span>
+            </div>
+
+            <div class="admin-content">
+                <div class="admin-page-heading">
+                    <div>
+                        <span class="admin-eyebrow" id="page-eyebrow">ADMINISTRATION</span>
+                        <h1 id="page-title">Overview</h1>
+                        <p id="page-description">Moderate the platform, care for accounts and keep UniLodge trustworthy.</p>
+                    </div>
+                    <div id="page-actions"></div>
+                </div>
+
+                <div id="admin-alert"></div>
+                <div id="admin-view">
+                    <div class="admin-loading"><span class="admin-spinner"></span> Opening the workspace…</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/admin.js"></script>
+</body>
+</html>

@@ -1,0 +1,44 @@
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: unilodge
+      POSTGRES_USER: unilodge_app
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - unilodge-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unilodge_app -d unilodge"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build: .
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      DB_URL: jdbc:postgresql://db:5432/unilodge
+      DB_USERNAME: unilodge_app
+      DB_PASSWORD: ${DB_PASSWORD}
+      JWT_SECRET: ${JWT_SECRET}
+      APP_URL: ${APP_URL:-http://localhost:8080}
+      MAIL_HOST: ${MAIL_HOST}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME}
+      MAIL_PASSWORD: ${MAIL_PASSWORD}
+      MAIL_FROM: ${MAIL_FROM}
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+    volumes:
+      - unilodge-uploads:/app/uploads
+      - unilodge-logs:/app/logs
+
+volumes:
+  unilodge-db:
+  unilodge-uploads:
+  unilodge-logs:

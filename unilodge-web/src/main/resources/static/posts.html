@@ -1,0 +1,86 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f7f2">
+    <meta name="description" content="Roommate requests and housing conversations from students across Ghana.">
+    <title>Student board | UniLodge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="UniLodge home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="browse.html">Find a place</a>
+            <a href="posts.html">Student board</a>
+            <a href="index.html#how-it-works">How it works</a>
+        </nav>
+        <div class="header-actions" id="header-actions">
+            <a class="sign-in-link" href="login.html">Sign in</a>
+            <a class="header-button" href="browse.html">Explore rooms <span aria-hidden="true">↗</span></a>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <div class="page-heading">
+            <div>
+                <span class="kicker">STUDENT BOARD</span>
+                <h1>Find your people, not just a place</h1>
+                <p>Roommate requests, shared-home ideas and honest questions from students around Palm University and beyond.</p>
+            </div>
+            <button class="btn btn-primary" type="button" id="new-post-button">+ Start a post</button>
+        </div>
+
+        <section class="panel" style="margin-bottom:20px">
+            <form id="post-filters" class="row" style="align-items:flex-end;gap:12px">
+                <label class="field" style="flex:1;min-width:180px">Search the board
+                    <input class="input" id="post-q" type="search" placeholder="Roommate, area, keyword">
+                </label>
+                <label class="field" style="min-width:200px">University
+                    <select class="select" id="post-university"><option value="">All universities</option></select>
+                </label>
+                <button class="btn btn-outline" type="submit">Search</button>
+                <button class="btn btn-ghost" type="button" id="post-reset">Clear</button>
+            </form>
+        </section>
+
+        <div class="results-toolbar">
+            <div><strong>Conversations</strong> <span id="post-count">Loading…</span></div>
+        </div>
+
+        <div class="post-grid" id="post-grid">
+            <div class="skeleton-card"></div>
+            <div class="skeleton-card"></div>
+        </div>
+        <div class="empty" id="post-empty" hidden>
+            <strong>No posts match that search.</strong>
+            Try a different keyword, or start the conversation yourself.
+        </div>
+        <div class="pagination" id="post-pagination" hidden></div>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <p>A kind, useful board for student housing in Ghana.</p>
+        <span class="copyright">© 2026 UniLodge · Be respectful, be honest</span>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/posts.js"></script>
+</body>
+</html>

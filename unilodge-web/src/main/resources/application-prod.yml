@@ -1,0 +1,38 @@
+# Production profile. Everything sensitive comes from environment variables.
+# Required: DB_URL, DB_USERNAME, DB_PASSWORD, JWT_SECRET, APP_URL,
+#           MAIL_HOST, MAIL_PORT, MAIL_USERNAME, MAIL_PASSWORD, MAIL_FROM.
+spring:
+  mail:
+    host: ${MAIL_HOST}
+    port: ${MAIL_PORT:587}
+    username: ${MAIL_USERNAME}
+    password: ${MAIL_PASSWORD}
+    properties:
+      mail:
+        smtp:
+          auth: true
+          starttls:
+            enable: true
+  jpa:
+    show-sql: false
+  flyway:
+    clean-disabled: true
+
+app:
+  mail:
+    mode: smtp
+    from: ${MAIL_FROM}
+    app-url: ${APP_URL}
+    expose-otp: false
+  bootstrap:
+    demo-data: false
+  cors:
+    allowed-origins: ${CORS_ORIGINS:}
+
+logging:
+  level:
+    root: INFO
+    com.unilodge: INFO
+    org.springframework.web: WARN
+  file:
+    name: ${LOG_FILE:logs/unilodge.log}

@@ -1,0 +1,148 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f7f2">
+    <meta name="description" content="Find verified student rooms, studios and shared homes near Palm University and campuses across Ghana with UniLodge.">
+    <title>UniLodge | Student accommodation in Ghana</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="UniLodge home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="browse.html">Find a place</a>
+            <a href="posts.html">Student board</a>
+            <a href="#how-it-works">How it works</a>
+        </nav>
+        <div class="header-actions" id="header-actions">
+            <a class="sign-in-link" href="login.html">Sign in</a>
+            <a class="header-button" href="browse.html">Explore rooms <span aria-hidden="true">↗</span></a>
+        </div>
+    </header>
+
+    <main id="home">
+        <section class="hero" aria-labelledby="hero-title">
+            <div class="hero-copy">
+                <span class="eyebrow"><span class="eyebrow-dot"></span> A better start to student life in Ghana</span>
+                <h1 id="hero-title">Find a place<br>to <span>feel at home.</span></h1>
+                <p>Search verified rooms, studios and shared homes near Palm University. Compare rent in Ghana cedis and reach landlords directly — no middlemen.</p>
+
+                <form class="search-panel" id="search-form">
+                    <label class="search-field campus-field" for="campus-search">
+                        <span class="search-icon" aria-hidden="true">
+                            <svg viewBox="0 0 24 24" fill="none"><path d="M12 21s7-4.4 7-11a7 7 0 1 0-14 0c0 6.6 7 11 7 11Z" stroke="currentColor" stroke-width="1.7"/><circle cx="12" cy="10" r="2.4" stroke="currentColor" stroke-width="1.7"/></svg>
+                        </span>
+                        <span class="field-copy"><span class="field-label">Campus or city</span><input id="campus-search" name="campus" type="search" placeholder="Where are you studying?" autocomplete="off"></span>
+                    </label>
+                    <label class="search-field budget-field" for="budget-search">
+                        <span class="search-icon" aria-hidden="true"><span class="currency-symbol">GH₵</span></span>
+                        <span class="field-copy">
+                            <span class="field-label">Monthly budget</span>
+                            <select id="budget-search" name="budget" aria-label="Maximum monthly budget">
+                                <option value="all" selected>Any budget</option>
+                                <option value="500">Up to GH₵500</option>
+                                <option value="600">Up to GH₵600</option>
+                                <option value="750">Up to GH₵750</option>
+                                <option value="900">Up to GH₵900</option>
+                                <option value="1200">Up to GH₵1,200</option>
+                            </select>
+                        </span>
+                    </label>
+                    <button class="search-button" type="submit" aria-label="Search accommodation">
+                        <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><circle cx="10.8" cy="10.8" r="6.8" stroke="currentColor" stroke-width="1.8"/><path d="m16 16 4.5 4.5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg>
+                        <span>Search</span>
+                    </button>
+                </form>
+                <p class="search-note"><span aria-hidden="true">✓</span> Every listing is reviewed by a UniLodge administrator before it goes live</p>
+            </div>
+
+            <div class="hero-visual" aria-label="Student accommodation near campus">
+                <img class="hero-photo" src="https://images.unsplash.com/photo-1522708323590-d24dbb6b0267?auto=format&fit=crop&w=1200&q=80" alt="Bright, furnished student apartment living room">
+                <div class="photo-shade"></div>
+                <div class="floating-card">
+                    <span class="floating-icon" aria-hidden="true">✓</span>
+                    <span><strong>Admin-approved listings</strong><small>Checked before students see them</small></span>
+                </div>
+                <div class="hero-note">
+                    <span class="note-icon" aria-hidden="true">
+                        <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </span>
+                    <span><strong>Your next chapter starts here</strong><small>Palm University College · Shai Hills · Greater Accra</small></span>
+                </div>
+                <span class="visual-orbit orbit-one" aria-hidden="true"></span>
+                <span class="visual-orbit orbit-two" aria-hidden="true"></span>
+            </div>
+        </section>
+
+        <section class="trust-strip" aria-label="UniLodge benefits">
+            <div><span class="trust-icon">⌂</span><span><strong>Near your campus</strong><small>Search by school or city</small></span></div>
+            <div><span class="trust-icon">₵</span><span><strong>Budget friendly</strong><small>Compare monthly prices in cedis</small></span></div>
+            <div><span class="trust-icon">✆</span><span><strong>Direct contact</strong><small>Call, WhatsApp or email landlords</small></span></div>
+        </section>
+
+        <section class="places-section" id="places" aria-labelledby="places-title">
+            <div class="section-heading">
+                <div>
+                    <span class="section-kicker">PLACES TO GET STARTED</span>
+                    <h2 id="places-title">Explore student stays</h2>
+                    <p>Fresh listings around Palm University College, reviewed by our team.</p>
+                </div>
+                <div class="results-summary" aria-live="polite"><span id="featured-count">—</span> places available</div>
+            </div>
+
+            <div class="property-grid" id="featured-grid">
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+                <div class="skeleton-card"></div>
+            </div>
+            <div class="empty" id="featured-empty" hidden>
+                <strong>No listings are live just yet.</strong>
+                Check back soon, or <a href="posts.html">browse the student board</a> for roommate requests.
+            </div>
+        </section>
+
+        <section class="how-section" id="how-it-works" aria-labelledby="how-title">
+            <div class="how-intro">
+                <span class="section-kicker">A SIMPLE WAY TO GET STARTED</span>
+                <h2 id="how-title">From searching to settled.</h2>
+                <p>Finding a place can feel like a lot. UniLodge helps you take it one clear step at a time.</p>
+            </div>
+            <div class="steps-grid">
+                <article class="step-card"><span class="step-number">01</span><span class="step-icon" aria-hidden="true">⌕</span><h3>Choose your campus</h3><p>Search by university or city and set the monthly rent that works for you.</p></article>
+                <article class="step-card"><span class="step-number">02</span><span class="step-icon" aria-hidden="true">☷</span><h3>Compare your options</h3><p>See rent, distance, room type, photos and the map pin together in one place.</p></article>
+                <article class="step-card"><span class="step-number">03</span><span class="step-icon" aria-hidden="true">✆</span><h3>Reach out directly</h3><p>Call, WhatsApp or email the landlord yourself. UniLodge never handles rent payments.</p></article>
+            </div>
+        </section>
+
+        <section class="closing-cta" id="get-started" aria-labelledby="cta-title">
+            <div><span class="section-kicker">YOUR NEXT HOME IS OUT THERE</span><h2 id="cta-title">Make room for what comes next.</h2><p>Create a free student account to save places and join the roommate board.</p></div>
+            <a class="cta-button" href="login.html?mode=register">Create an account <span aria-hidden="true">↗</span></a>
+        </section>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <p>Helping students find a place to call home in Ghana.</p>
+        <span class="copyright">© 2026 UniLodge · Palm University College · Shai Hills</span>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/home.js"></script>
+</body>
+</html>

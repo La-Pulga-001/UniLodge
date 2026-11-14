@@ -1,0 +1,13 @@
+target/
+.git/
+.vscode/
+.idea/
+uploads/
+logs/
+*.log
+build.log
+run.log
+.env
+smoke.ps1
+psinfo.ps1
+pslist.ps1

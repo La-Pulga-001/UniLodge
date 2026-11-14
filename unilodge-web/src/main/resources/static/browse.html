@@ -1,0 +1,168 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f7f2">
+    <meta name="description" content="Browse verified student accommodation near Palm University and campuses across Ghana.">
+    <title>Browse rooms | UniLodge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="UniLodge home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="browse.html">Find a place</a>
+            <a href="posts.html">Student board</a>
+            <a href="index.html#how-it-works">How it works</a>
+        </nav>
+        <div class="header-actions" id="header-actions">
+            <a class="sign-in-link" href="login.html">Sign in</a>
+            <a class="header-button" href="browse.html">Explore rooms <span aria-hidden="true">↗</span></a>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <div class="page-heading">
+            <div>
+                <span class="kicker">STUDENT ACCOMMODATION · GHANA</span>
+                <h1>Find your place near campus</h1>
+                <p>Every home here has been reviewed by a UniLodge administrator. Contact landlords directly when you find one you like.</p>
+            </div>
+            <div class="results-summary" aria-live="polite"><span id="result-count">—</span> places match</div>
+        </div>
+
+        <div class="browse-layout">
+            <aside class="filter-panel panel" aria-labelledby="filter-title">
+                <div class="panel-head">
+                    <div><h2 id="filter-title">Refine your search</h2><p class="filter-sub">Set the basics — you can always widen it later.</p></div>
+                </div>
+                <form id="filter-form">
+                    <label class="field">Search
+                        <input class="input" id="filter-q" type="search" placeholder="Name, area or keyword">
+                    </label>
+                    <label class="field">University
+                        <select class="select" id="filter-university"><option value="">All universities</option></select>
+                    </label>
+                    <div class="form-grid" style="grid-template-columns:1fr 1fr;gap:8px">
+                        <label class="field">Min rent (GH₵)
+                            <input class="input" id="filter-min" type="number" min="0" step="50" placeholder="0">
+                        </label>
+                        <label class="field">Max rent (GH₵)
+                            <input class="input" id="filter-max" type="number" min="0" step="50" placeholder="Any">
+                        </label>
+                    </div>
+                    <label class="field">Property type
+                        <select class="select" id="filter-type">
+                            <option value="">Any type</option>
+                            <option value="SINGLE_ROOM">Single room</option>
+                            <option value="SELF_CONTAINED">Self-contained</option>
+                            <option value="STUDIO">Studio</option>
+                            <option value="APARTMENT">Apartment</option>
+                            <option value="SHARED_HOUSE">Shared house</option>
+                            <option value="HOSTEL">Hostel</option>
+                        </select>
+                    </label>
+                    <label class="field">Furnishing
+                        <select class="select" id="filter-furnished">
+                            <option value="">Any</option>
+                            <option value="FURNISHED">Furnished</option>
+                            <option value="SEMI_FURNISHED">Semi-furnished</option>
+                            <option value="UNFURNISHED">Unfurnished</option>
+                        </select>
+                    </label>
+                    <label class="field">Bedrooms (minimum)
+                        <select class="select" id="filter-bedrooms">
+                            <option value="">Any</option>
+                            <option value="1">1+</option>
+                            <option value="2">2+</option>
+                            <option value="3">3+</option>
+                            <option value="4">4+</option>
+                        </select>
+                    </label>
+                    <label class="field">Distance to campus
+                        <select class="select" id="filter-distance">
+                            <option value="">Any distance</option>
+                            <option value="1">Within 1 km</option>
+                            <option value="3">Within 3 km</option>
+                            <option value="5">Within 5 km</option>
+                            <option value="10">Within 10 km</option>
+                        </select>
+                    </label>
+                    <label class="field">Sort by
+                        <select class="select" id="filter-sort">
+                            <option value="newest">Newest first</option>
+                            <option value="rent_asc">Rent: low to high</option>
+                            <option value="rent_desc">Rent: high to low</option>
+                            <option value="distance">Closest to campus</option>
+                            <option value="popular">Most viewed</option>
+                        </select>
+                    </label>
+                    <div class="form-actions">
+                        <button class="btn btn-primary btn-block" type="submit">Apply filters</button>
+                        <button class="btn btn-ghost btn-block" type="button" id="filter-reset">Clear all</button>
+                    </div>
+                </form>
+            </aside>
+
+            <section class="browse-results" aria-labelledby="results-title">
+                <div class="results-toolbar">
+                    <div><strong id="results-title">Student homes</strong> <span id="results-caption">Loading…</span></div>
+                    <div class="view-toggle" role="group" aria-label="Results view">
+                        <button type="button" class="is-active" data-view="grid" aria-pressed="true">Grid</button>
+                        <button type="button" data-view="map" aria-pressed="false">Map</button>
+                    </div>
+                </div>
+
+                <div id="grid-view">
+                    <div class="property-grid" id="results-grid">
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                        <div class="skeleton-card"></div>
+                    </div>
+                    <div class="empty" id="results-empty" hidden>
+                        <strong>No homes match those filters yet.</strong>
+                        Try widening your budget, choosing a different room type, or clearing the distance filter.
+                    </div>
+                    <div class="pagination" id="pagination" hidden></div>
+                </div>
+
+                <div id="map-view" hidden>
+                    <div class="map-layout">
+                        <div class="map-panel">
+                            <div id="map"></div>
+                            <span class="map-note">Pins show the approximate location of each approved listing.</span>
+                        </div>
+                        <div class="map-list" id="map-list"></div>
+                    </div>
+                </div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <p>Helping students find a place to call home in Ghana.</p>
+        <span class="copyright">© 2026 UniLodge · Palm University College · Shai Hills</span>
+    </footer>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js" integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <script src="/js/api.js"></script>
+    <script src="/js/browse.js"></script>
+</body>
+</html>

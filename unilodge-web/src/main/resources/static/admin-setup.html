@@ -1,0 +1,158 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#142b2a">
+    <meta name="description" content="Set up or verify a UniLodge administrator account.">
+    <title>Administrator access | UniLodge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/auth.css">
+    <link rel="stylesheet" href="/css/auth-extra.css">
+</head>
+<body>
+    <main class="login-page">
+        <div class="ambient ambient-one" aria-hidden="true"></div>
+        <div class="ambient ambient-two" aria-hidden="true"></div>
+
+        <div class="login-shell auth-shell-narrow">
+            <section class="welcome-panel" aria-labelledby="welcome-title">
+                <a class="brand" href="index.html" aria-label="UniLodge home">
+                    <span class="brand-mark" aria-hidden="true">
+                        <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+                    </span>
+                    <span>Uni<span class="brand-light">Lodge</span></span>
+                </a>
+
+                <div class="welcome-copy">
+                    <span class="eyebrow"><span class="eyebrow-dot"></span> Administration</span>
+                    <h1 id="welcome-title">Guard the <span>nest.</span></h1>
+                    <p>Administrators approve landlords and listings, keep the student board healthy, and protect the quality of every home students see.</p>
+                </div>
+
+                <div class="welcome-note">
+                    <span class="note-icon" aria-hidden="true">
+                        <svg viewBox="0 0 24 24" fill="none"><path d="M12 3 5 6v5c0 4.6 3 8.4 7 10 4-1.6 7-5.4 7-10V6l-7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                    </span>
+                    <span><strong>Only the original three administrators</strong><small>can appoint or remove other administrators.</small></span>
+                </div>
+            </section>
+
+            <section class="login-card" aria-labelledby="setup-title">
+                <a class="back-link" href="login.html"><span aria-hidden="true">←</span> Back to sign in</a>
+                <div class="card-heading">
+                    <span class="card-kicker" id="setup-kicker">ADMINISTRATOR ACCESS</span>
+                    <h2 id="setup-title">Set up your admin account</h2>
+                    <p id="setup-description">Verify your email with a one-time code, then choose a password.</p>
+                </div>
+
+                <p class="admin-setup-note" id="setup-note">
+                    <strong>How this works:</strong> UniLodge emails a 6-digit code to the administrator address on record.
+                    In local development the code is also shown on this page. Codes expire after 10 minutes.
+                </p>
+
+                <!-- Invitation acceptance -->
+                <form class="login-form" id="invite-form" method="post" action="admin-setup.html" hidden novalidate>
+                    <p class="form-status" id="invite-preview">Checking your invitation…</p>
+                    <label class="form-field" for="invite-code">
+                        <span>Verification code</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="4" y="11" width="16" height="9" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
+                            <input id="invite-code" type="text" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                        </span>
+                    </label>
+                    <button class="text-link" type="button" id="invite-send">Email me a verification code</button>
+                    <div class="auth-dev-code" id="invite-dev" hidden></div>
+                    <label class="form-field" for="invite-password">
+                        <span>Choose a password</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="invite-password" type="password" minlength="8" maxlength="72" placeholder="At least 8 characters" autocomplete="new-password">
+                        </span>
+                    </label>
+                    <label class="form-field" for="invite-confirm">
+                        <span>Confirm password</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="invite-confirm" type="password" minlength="8" maxlength="72" placeholder="Repeat your password" autocomplete="new-password">
+                        </span>
+                    </label>
+                    <p class="form-status" id="invite-status" role="status" aria-live="polite" hidden></p>
+                    <button class="submit-button" type="submit" id="invite-submit">Accept invitation <span aria-hidden="true">→</span></button>
+                </form>
+
+                <!-- Verification for an already-promoted admin -->
+                <form class="login-form" id="verify-form" method="post" action="admin-setup.html" hidden novalidate>
+                    <p class="form-status" id="verify-note-line">A verification code is needed to unlock the administrator workspace.</p>
+                    <button class="text-link" type="button" id="verify-send">Email me a verification code</button>
+                    <div class="auth-dev-code" id="verify-dev" hidden></div>
+                    <label class="form-field otp-field" for="verify-code">
+                        <span>Verification code</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="4" y="11" width="16" height="9" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
+                            <input id="verify-code" type="text" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                        </span>
+                    </label>
+                    <p class="form-status" id="verify-status" role="status" aria-live="polite" hidden></p>
+                    <button class="submit-button" type="submit" id="verify-submit">Verify and continue <span aria-hidden="true">→</span></button>
+                </form>
+
+                <!-- Original administrator initial setup -->
+                <form class="login-form" id="setup-form" method="post" action="admin-setup.html" novalidate>
+                    <div class="step-dots" id="setup-steps">
+                        <span class="is-active" data-step="1"></span>
+                        <span data-step="2"></span>
+                        <small id="setup-step-label">STEP 1 OF 2</small>
+                    </div>
+                    <label class="form-field" for="setup-email">
+                        <span>Administrator email</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="setup-email" type="email" placeholder="you@example.com" autocomplete="email" maxlength="160">
+                        </span>
+                    </label>
+                    <label class="form-field otp-field" id="setup-code-field" for="setup-code" hidden>
+                        <span>Verification code</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><path d="M7 11V8a5 5 0 0 1 10 0v3" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><rect x="4" y="11" width="16" height="9" rx="2" stroke="currentColor" stroke-width="1.7"/></svg>
+                            <input id="setup-code" type="text" inputmode="numeric" pattern="\d{6}" maxlength="6" placeholder="000000" autocomplete="one-time-code">
+                        </span>
+                    </label>
+                    <label class="form-field" id="setup-password-field" for="setup-password" hidden>
+                        <span>Choose a password</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="setup-password" type="password" minlength="8" maxlength="72" placeholder="At least 8 characters" autocomplete="new-password">
+                        </span>
+                    </label>
+                    <label class="form-field" id="setup-confirm-field" for="setup-confirm" hidden>
+                        <span>Confirm password</span>
+                        <span class="input-wrap">
+                            <svg viewBox="0 0 24 24" fill="none" aria-hidden="true"><rect x="4.5" y="10" width="15" height="10" rx="2.2" stroke="currentColor" stroke-width="1.7"/><path d="M8 10V7.5a4 4 0 0 1 8 0V10" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg>
+                            <input id="setup-confirm" type="password" minlength="8" maxlength="72" placeholder="Repeat your password" autocomplete="new-password">
+                        </span>
+                    </label>
+                    <div class="otp-actions" id="setup-resend-row" hidden>
+                        <small>The code expires in 10 minutes.</small>
+                        <button class="link-button" type="button" id="setup-resend">Resend code</button>
+                    </div>
+                    <p class="form-status" id="setup-status" role="status" aria-live="polite" hidden></p>
+                    <div class="auth-dev-code" id="setup-dev" hidden></div>
+                    <button class="submit-button" type="submit" id="setup-submit">Send setup code <span aria-hidden="true">→</span></button>
+                </form>
+
+                <div class="card-footer">
+                    <span class="footer-rule" aria-hidden="true"></span>
+                    <p>Student or landlord? <a href="login.html">Sign in here</a></p>
+                </div>
+                <p class="page-caption">UniLodge <span>· administrator access</span></p>
+            </section>
+        </div>
+    </main>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/admin-setup.js"></script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="theme-color" content="#f6f7f2">
+    <meta name="description" content="Your UniLodge workspace: saved homes, roommate posts and landlord listings.">
+    <title>Dashboard | UniLodge</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@500;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/css/site.css">
+    <link rel="stylesheet" href="/css/app.css">
+</head>
+<body>
+    <header class="site-header">
+        <a class="brand" href="index.html" aria-label="UniLodge home">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <nav class="main-nav" aria-label="Main navigation">
+            <a href="browse.html">Find a place</a>
+            <a href="posts.html">Student board</a>
+            <a href="index.html#how-it-works">How it works</a>
+        </nav>
+        <div class="header-actions" id="header-actions">
+            <a class="sign-in-link" href="login.html">Sign in</a>
+            <a class="header-button" href="browse.html">Explore rooms <span aria-hidden="true">↗</span></a>
+        </div>
+    </header>
+
+    <main class="page-shell">
+        <div class="page-heading">
+            <div>
+                <span class="kicker">YOUR WORKSPACE</span>
+                <h1 id="dash-heading">Welcome back</h1>
+                <p id="dash-sub">Keep track of the homes and conversations that matter to you.</p>
+            </div>
+            <div class="row" id="dash-actions">
+                <a class="btn btn-outline" href="browse.html">Browse homes</a>
+            </div>
+        </div>
+
+        <div class="dash-layout">
+            <aside class="dash-side panel">
+                <div class="dash-profile" id="dash-profile">
+                    <span class="avatar">UL</span>
+                    <span><strong>Loading…</strong><small>Please wait</small></span>
+                </div>
+                <nav class="dash-nav" id="dash-nav" aria-label="Dashboard sections">
+                    <button type="button" data-section="overview" class="is-active"><span aria-hidden="true">▦</span> Overview</button>
+                    <button type="button" data-section="saved-listings"><span aria-hidden="true">♡</span> Saved listings</button>
+                    <button type="button" data-section="saved-posts"><span aria-hidden="true">☷</span> Saved posts</button>
+                    <button type="button" data-section="my-posts"><span aria-hidden="true">✎</span> My posts</button>
+                    <button type="button" data-section="my-listings" id="nav-my-listings" hidden><span aria-hidden="true">⌂</span> My listings</button>
+                    <a href="profile.html"><span aria-hidden="true">♙</span> Profile settings</a>
+                </nav>
+            </aside>
+
+            <section id="dash-content" aria-live="polite">
+                <div class="loading-line"><span class="spinner"></span> Loading your dashboard…</div>
+            </section>
+        </div>
+    </main>
+
+    <footer class="site-footer">
+        <a class="brand footer-brand" href="index.html">
+            <span class="brand-mark" aria-hidden="true">
+                <svg viewBox="0 0 32 32" fill="none"><path d="m4.5 14 11.5-9L27.5 14v12.2a1.3 1.3 0 0 1-1.3 1.3H5.8a1.3 1.3 0 0 1-1.3-1.3V14Z" stroke="currentColor" stroke-width="2" stroke-linejoin="round"/><path d="M12 27.5V18h8v9.5" stroke="currentColor" stroke-width="2" stroke-linecap="round"/></svg>
+            </span>
+            <span>Uni<span class="brand-light">Lodge</span></span>
+        </a>
+        <p>Helping students find a place to call home in Ghana.</p>
+        <span class="copyright">© 2026 UniLodge · Palm University College · Shai Hills</span>
+    </footer>
+
+    <script src="/js/api.js"></script>
+    <script src="/js/dashboard.js"></script>
+</body>
+</html>
