@@ -26,8 +26,8 @@ unilodge-persistence/  JPA entities, repositories, specifications, Flyway SQL
 unilodge-service/      business logic: auth, OTP, email, storage, audit, admin
 unilodge-web/          Spring Boot app, REST controllers, security, static UI
 docs/API.md            endpoint reference
-docs/RENDER.md         Render deployment guide
-render.yaml            Render Blueprint (Docker + Postgres)
+docs/DEPLOYMENT.md     Railway and Oracle Cloud deployment guide
+railway.json           Railway build/health-check configuration
 Dockerfile             multi-stage production image
 docker-entrypoint.sh   fixes mounted-disk ownership, drops privileges
 docker-compose.yml     PostgreSQL + application stack
@@ -88,3 +88,26 @@ Statuses:
 Built for Palm University College and the Ghanaian student-housing market.
 Third-party services: Leaflet (BSD-2-Clause), OpenStreetMap/Nominatim usage
 policy applies to geocoding and map tiles.
+
+---
+
+## 4. Deployment
+
+The production image is built from `Dockerfile` and needs a PostgreSQL 18
+database. [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) covers Railway (recommended)
+and Oracle Cloud Always Free, including environment variables, the `APP_URL`
+setting used in email links, demo accounts, and the administrator setup flow.
+
+Demo accounts use the password `Demo@1234`:
+
+| Role | Email |
+| --- | --- |
+| Student | `kwame.student@unilodge.test` |
+| Student | `abena.student@unilodge.test` |
+| Student | `yaw.student@unilodge.test` |
+| Approved landlord | `ama.landlord@unilodge.test` |
+| Pending landlord | `kofi.landlord@unilodge.test` |
+
+Set `DEMO_DATA=false` in production for an empty catalogue. The original
+administrators (`fblesselikem@gmail.com`, `ayensusamuel866@gmail.com`,
+`deiyeshua05@gmail.com`) activate their accounts at `/admin-setup.html`.

@@ -2,7 +2,7 @@
 # UniLodge container entrypoint.
 #
 # The container starts as root only so it can take ownership of mounted
-# storage (Render mounts persistent disks as root). It then drops to the
+# storage (managed platforms mount persistent disks as root). It then drops to the
 # unprivileged "unilodge" user and starts the application.
 set -eu
 

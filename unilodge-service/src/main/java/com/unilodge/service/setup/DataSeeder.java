@@ -52,7 +52,7 @@ import java.util.Set;
  *
  * <p>Demo seeding is idempotent. It adds any missing sample listings and
  * student-board threads, and it regenerates sample photos that disappeared
- * with an ephemeral container filesystem (the Render free plan resets the
+ * with an ephemeral container filesystem (free hosting plans reset the
  * filesystem whenever the service restarts).</p>
  */
 @Component
@@ -515,7 +515,7 @@ public class DataSeeder implements CommandLineRunner {
     }
 
     /**
-     * The free Render plan resets the filesystem on every restart. Rebuild any
+     * Free hosting plans reset the filesystem on every restart. Rebuild any
      * sample photo that is referenced by the database but no longer on disk.
      */
     private void repairMissingDemoImages() {
