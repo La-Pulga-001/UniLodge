@@ -21,6 +21,10 @@
 
 body { background: var(--canvas); }
 
+/* The role-aware navigation hides items with the HTML hidden attribute.
+   Without this rule, component display rules override the browser default. */
+[hidden] { display: none !important; }
+
 /* ---------------------------------------------------------------- header */
 .site-header { position: relative; z-index: 10; }
 .nav-user { position: relative; display: inline-flex; align-items: center; }
