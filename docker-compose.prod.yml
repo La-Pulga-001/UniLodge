@@ -1,0 +1,81 @@
+# Production stack for a single VM (Oracle Cloud Always Free, Hetzner, any VPS).
+#
+#   cp .env.example .env      # fill in DB_PASSWORD, JWT_SECRET, APP_URL, SITE_ADDRESS
+#   docker compose -f docker-compose.prod.yml up -d --build
+#
+# Only Caddy publishes ports. PostgreSQL and the Spring Boot app stay on the
+# private Docker network.
+
+name: unilodge
+
+services:
+  db:
+    image: postgres:18-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: unilodge
+      POSTGRES_USER: unilodge_app
+      POSTGRES_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+    volumes:
+      - unilodge-db:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U unilodge_app -d unilodge"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    restart: unless-stopped
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      SPRING_PROFILES_ACTIVE: prod
+      PORT: 8080
+      DB_URL: jdbc:postgresql://db:5432/unilodge
+      DB_USERNAME: unilodge_app
+      DB_PASSWORD: ${DB_PASSWORD:?set DB_PASSWORD in .env}
+      JWT_SECRET: ${JWT_SECRET:?set JWT_SECRET in .env}
+      APP_URL: ${APP_URL:?set APP_URL in .env}
+      DEMO_DATA: ${DEMO_DATA:-true}
+      MAIL_MODE: ${MAIL_MODE:-console}
+      MAIL_HOST: ${MAIL_HOST:-}
+      MAIL_PORT: ${MAIL_PORT:-587}
+      MAIL_USERNAME: ${MAIL_USERNAME:-}
+      MAIL_PASSWORD: ${MAIL_PASSWORD:-}
+      MAIL_FROM: "${MAIL_FROM:-UniLodge <no-reply@unilodge.local>}"
+      CORS_ORIGINS: ${CORS_ORIGINS:-}
+      # The demo seeder renders photos; cap the heap to fit the VM.
+      JAVA_TOOL_OPTIONS: ${JAVA_TOOL_OPTIONS:--Djava.awt.headless=true -Xms128m -Xmx768m}
+    volumes:
+      - unilodge-uploads:/app/uploads
+      - unilodge-logs:/app/logs
+    expose:
+      - "8080"
+
+  caddy:
+    image: caddy:2-alpine
+    restart: unless-stopped
+    depends_on:
+      - app
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    environment:
+      SITE_ADDRESS: ${SITE_ADDRESS:?set SITE_ADDRESS in .env}
+      ACME_EMAIL: ${ACME_EMAIL:-}
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy-data:/data
+      - caddy-config:/config
+
+volumes:
+  unilodge-db:
+  unilodge-uploads:
+  unilodge-logs:
+  caddy-data:
+  caddy-config:

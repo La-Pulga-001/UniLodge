@@ -29,6 +29,9 @@ docs/API.md            endpoint reference
 docs/DEPLOYMENT.md     Railway and Oracle Cloud deployment guide
 railway.json           Railway build/health-check configuration
 Dockerfile             multi-stage production image
+docker-compose.yml     local PostgreSQL + application stack
+docker-compose.prod.yml production VM stack with Caddy HTTPS
+deploy/                Oracle Cloud setup, Caddy config and backup scripts
 docker-entrypoint.sh   fixes mounted-disk ownership, drops privileges
 docker-compose.yml     PostgreSQL + application stack
 .env.example           environment template for Docker Compose

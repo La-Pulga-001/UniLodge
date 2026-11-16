@@ -134,65 +134,138 @@ instructions, then change `APP_URL` to the new `https://` address and redeploy.
 
 ## 2. Deploy on Oracle Cloud Always Free
 
-This path uses one Always Free VM and Docker Compose. It costs nothing but
-requires a credit card for identity verification and about 30 minutes of
-setup. Oracle may reclaim idle Always Free compute; keep the instance active.
+One Always Free VM runs PostgreSQL, the application and Caddy. Caddy
+terminates HTTPS and renews certificates automatically. The stack is
+`docker-compose.prod.yml`; `deploy/oracle-setup.sh` installs Docker and opens
+the host firewall.
 
-1. Create an **Always Free** Ubuntu 24.04 VM (Ampere A1 or AMD micro) in a
-   region close to Ghana, for example Frankfurt or London. Note the public IP
-   and add your SSH key.
-2. Allow inbound TCP 22, 80 and 443 in the subnet's security list.
-3. Install Docker:
+This path costs nothing, but Oracle asks for a credit card for identity
+verification, and Ampere A1 capacity is sometimes unavailable at peak times.
 
-   ```bash
-   sudo apt-get update
-   sudo apt-get install -y docker.io docker-compose-v2 git
-   sudo usermod -aG docker "$USER"
-   ```
+### 2.1 Create the VM
 
-   Log out and back in so the group change applies.
+1. In the OCI console open **Compute → Instances → Create instance**.
+2. Name it `unilodge`, choose **Canonical Ubuntu 24.04**, and select the
+   **Ampere A1.Flex** shape with 2 OCPU / 12 GB (or 4 OCPU / 24 GB, still
+   Always Free).
+3. Under **Networking**, assign a public IPv4 address and add your SSH public
+   key. Note the public IP.
+4. Create the instance. If A1 capacity is unavailable, retry later, try
+   another availability domain, or fall back to `VM.Standard.E2.1.Micro`
+   (the setup script adds 2 GB of swap to make the build fit).
+5. Open **Networking → Virtual Cloud Networks → your VCN → Security Lists →
+   Default Security List** and add ingress rules for TCP **80** and **443**
+   from `0.0.0.0/0`. Keep the existing SSH rule on port 22.
 
-4. Clone the repository and create `.env` from the template:
+### 2.2 Install Docker
 
-   ```bash
-   git clone https://github.com/La-Pulga-001/UniLodge.git
-   cd UniLodge
-   cp .env.example .env
-   nano .env
-   ```
+```bash
+ssh -i ~/.ssh/your-key ubuntu@<PUBLIC_IP>
+sudo apt-get update && sudo apt-get install -y git
+git clone https://github.com/La-Pulga-001/UniLodge.git
+cd UniLodge
+sudo bash deploy/oracle-setup.sh
+newgrp docker        # or log out and back in
+```
 
-   Set at least `DB_PASSWORD`, `JWT_SECRET`, `APP_URL` and `MAIL_*`.
-   `docker-compose.yml` already wires the database and uploads volume, and
-   runs the app on port 8080.
+The script installs Docker Engine and the Compose plugin, adds `ubuntu` to
+the `docker` group, opens ports 80/443 in the host firewall, and adds swap on
+small VMs.
 
-5. Start the stack:
+### 2.3 Configure the environment
 
-   ```bash
-   docker compose up -d --build
-   docker compose logs -f app
-   ```
+```bash
+cp .env.example .env
+openssl rand -base64 48   # use this as JWT_SECRET
+openssl rand -base64 24   # use this as DB_PASSWORD
+nano .env
+```
 
-6. Put HTTPS in front of it with Caddy:
+Set at least:
 
-   ```bash
-   sudo apt-get install -y caddy
-   sudo tee /etc/caddy/Caddyfile >/dev/null <<'EOF'
-   unilodge.example.com {
-       reverse_proxy 127.0.0.1:8080
-   }
-   EOF
-   sudo systemctl reload caddy
-   ```
+```dotenv
+DB_PASSWORD=<generated>
+JWT_SECRET=<generated>
+SITE_ADDRESS=unilodge.<PUBLIC_IP>.sslip.io
+ACME_EMAIL=you@example.com
+APP_URL=https://unilodge.<PUBLIC_IP>.sslip.io
+DEMO_DATA=true
+MAIL_MODE=console
+```
 
-   Point the domain's DNS `A` record at the VM IP first. Caddy obtains and
-   renews the certificate automatically. Set `APP_URL` to the same `https://`
-   address and restart with `docker compose up -d`.
+`sslip.io` is a free wildcard DNS service: the hostname above resolves to the
+IP embedded in it, so Caddy can obtain a real certificate without buying a
+domain. If you own a domain, point its `A` record at the VM and use that name
+instead. For a plain-HTTP IP-only demo set `SITE_ADDRESS=:80` and
+`APP_URL=http://<PUBLIC_IP>`.
 
-7. Back up the database regularly:
+`APP_URL` must match the final `https://` address exactly; it is used in OTP,
+password-reset and invitation links.
 
-   ```bash
-   docker compose exec db pg_dump -U unilodge_app unilodge > unilodge-$(date +%F).sql
-   ```
+### 2.4 Start the stack
+
+```bash
+sudo docker compose -f docker-compose.prod.yml up -d --build
+sudo docker compose -f docker-compose.prod.yml logs -f app
+```
+
+The first build takes roughly 5–15 minutes on an A1 VM and longer on a micro
+instance. Wait for `Started UniLodgeApplication`, then open
+`https://<SITE_ADDRESS>`. The first HTTPS request can take a few seconds while
+Caddy obtains the certificate.
+
+Only Caddy publishes ports; PostgreSQL and the application stay on the
+private Docker network. Uploads and database files live in named volumes and
+survive redeploys.
+
+### 2.5 Demo content, email and administrators
+
+The demo accounts, 8 featured listings and student-board posts described in
+sections 1.4–1.6 work the same way. Open
+`https://<SITE_ADDRESS>/admin-setup.html` for the three original
+administrators. With `MAIL_MODE=console`, read the OTP codes from:
+
+```bash
+sudo docker compose -f docker-compose.prod.yml logs app | grep -A 12 "UniLodge mail"
+```
+
+After configuring SMTP in `.env`, apply it with
+`sudo docker compose -f docker-compose.prod.yml up -d`.
+
+### 2.6 Updates
+
+```bash
+cd ~/UniLodge
+git pull
+sudo docker compose -f docker-compose.prod.yml up -d --build
+```
+
+### 2.7 Backups
+
+`deploy/backup.sh` writes a compressed dump to `backups/` and keeps 14 days:
+
+```bash
+cd ~/UniLodge
+bash deploy/backup.sh
+```
+
+Schedule it daily with `crontab -e` (as `ubuntu`):
+
+```cron
+15 3 * * * cd /home/ubuntu/UniLodge && bash deploy/backup.sh >> /home/ubuntu/unilodge-backup.log 2>&1
+```
+
+Restore with the app stopped:
+
+```bash
+sudo docker compose -f docker-compose.prod.yml stop app
+sudo docker compose -f docker-compose.prod.yml exec -T db \
+  pg_restore -U unilodge_app -d unilodge --clean --if-exists < backups/unilodge-YYYY-MM-DD-HHMM.dump
+sudo docker compose -f docker-compose.prod.yml start app
+```
+
+Copy backups off the VM regularly; a lost boot volume takes its backups with
+it.
 
 ---
 
@@ -209,6 +282,9 @@ setup. Oracle may reclaim idle Always Free compute; keep the instance active.
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | no | SMTP delivery |
 | `UPLOAD_DIR` | no | Upload directory (Dockerfile sets `/app/uploads`) |
 | `CORS_ORIGINS` | no | Comma-separated extra browser origins |
+| `SITE_ADDRESS` | production Compose only | Hostname Caddy serves; the domain, an `sslip.io` name, or `:80` |
+| `ACME_EMAIL` | production Compose only | Let's Encrypt contact address |
+| `JAVA_TOOL_OPTIONS` | production Compose only | JVM flags; defaults to a 768 MB heap cap |
 
 Passwords, `JWT_SECRET` and SMTP credentials belong in the platform's
 variable store, never in Git.
@@ -219,11 +295,15 @@ variable store, never in Git.
 
 | Symptom | Cause and fix |
 | --- | --- |
-| Health check never passes | Read the build/runtime log for Flyway or datasource errors. Confirm the database variables resolve and the database is in the same project. |
-| `Connection refused` to PostgreSQL | The database is still provisioning or the `${{Postgres.*}}` service name is wrong. |
+| Health check never passes (Railway) | Read the build/runtime log for Flyway or datasource errors. Confirm the database variables resolve and the database is in the same project. |
+| `Connection refused` to PostgreSQL | The database is still provisioning, or the `${{Postgres.*}}` service name is wrong. |
 | Login works, OTP links are wrong | `APP_URL` is missing or still `http://localhost:8080`. Set the public URL and redeploy. |
 | OTP email not received | Configure SMTP; meanwhile read the code from the service log. |
 | Uploaded photos vanish after deploy | Expected without a volume. Mount one at `/app/uploads`. |
 | Everyone is logged out after a deploy | `JWT_SECRET` changed. Restore the previous value. |
 | Admin setup says the email is unknown | Confirm the address is in `app.bootstrap.admin-emails` and the profile is `prod`. |
 | Railway service stops at the free credit limit | The Free plan only includes `$1/month`; upgrade to Hobby or use the Oracle path. |
+| Oracle site unreachable on port 80/443 | Allow TCP 80 and 443 in the OCI security list, then check `sudo iptables -L INPUT -n`. |
+| Caddy cannot obtain a certificate | `SITE_ADDRESS` must resolve to the VM's public IP and ports 80/443 must be reachable. Check `docker compose -f docker-compose.prod.yml logs caddy`. |
+| Docker build killed on an AMD micro VM | The 1 GB instance is out of memory. Use an Ampere A1 shape or confirm the setup script added swap. |
+| `permission denied` running Docker | Log out and back in after `deploy/oracle-setup.sh`, or run `newgrp docker`. |
