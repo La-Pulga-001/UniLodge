@@ -97,8 +97,9 @@ policy applies to geocoding and map tiles.
 ## 4. Deployment
 
 The production image is built from `Dockerfile` and needs a PostgreSQL 18
-database. [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) covers Railway (recommended)
-and Oracle Cloud Always Free, including environment variables, the `APP_URL`
+database. [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) covers hosting, including
+[Northflank Sandbox](docs/NORTHFLANK.md) (free, no card, does not sleep),
+Railway and Oracle Cloud Always Free, plus environment variables, the `APP_URL`
 setting used in email links, demo accounts, and the administrator setup flow.
 
 Demo accounts use the password `Demo@1234`:

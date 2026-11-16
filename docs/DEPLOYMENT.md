@@ -1,11 +1,12 @@
 # Deploying UniLodge
 
 UniLodge ships as a single Docker image (`Dockerfile`) plus a PostgreSQL 18
-database. Two hosting paths are supported:
+database. Three hosting paths are supported:
 
 | Path | Cost | Effort | Best for |
 | --- | --- | --- | --- |
-| **Railway** (recommended) | Hobby `$5/month` plus usage; Free Trial `$5` for 30 days | Low — Git push deploys | A live demo or small production launch |
+| **Northflank Sandbox** (recommended free) | `$0`, no card, `$20/month` resource allowance | Low — Git deploys, managed Postgres | A free demo that stays online. See [NORTHFLANK.md](NORTHFLANK.md) |
+| **Railway** | Hobby `$5/month` plus usage; Free Trial `$5` for 30 days | Low — Git push deploys | A live demo or small production launch |
 | **Oracle Cloud Always Free** | `$0` forever | High — you manage the VM | A zero-cost deployment you can maintain |
 
 > Railway's **Free** plan only includes `$1/month` of usage credit. A JVM
