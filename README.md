@@ -1,8 +1,8 @@
-# UniLodge
+# UniLodge.
 
-UniLodge is a student-accommodation platform for Ghana. Students browse approved
+UniLodge is a/an/ana/banger student-accommodation platform for Ghana. Students browse approved
 listings near their university, compare rent and distance, save favourites,
-post roommate requests, comment and contact landlords directly. Landlords
+post roommate requests, comment, and contact landlords directly. Landlords
 publish listings after administrator approval. Administrators moderate
 accounts, listings and posts and manage each other through an audited
 governance flow.
@@ -12,7 +12,7 @@ Greater Accra). Further institutions can be added from the admin workspace
 without redeploying.
 
 - Currency: Ghana cedi (GH₵)
-- Payments: none. UniLodge only provides direct call / WhatsApp / email contact.
+- Payments: none. UniLodge only provides direct call/WhatsApp/email contact.
 - Backend: Java 25, Spring Boot 3.5.6, PostgreSQL 18
 - Frontend: plain HTML, CSS and JavaScript served by Spring Boot (no build step)
 
