@@ -94,7 +94,7 @@ Add `APP_URL` only when you attach a custom domain (section 9).
 
 ## 4. Demo content and logins
 
-`DEMO_DATA=true` seeds 18 approved listings (**8** on the home page), one
+`DEMO_DATA=true` seeds 18 approved listings (**12** on the home page), one
 pending listing for the admin approval flow, student-board posts with comments,
 and five users. Seeding is idempotent: a restart adds anything missing and
 regenerates demo photos lost with the container filesystem.

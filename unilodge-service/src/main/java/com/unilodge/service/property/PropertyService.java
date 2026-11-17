@@ -103,7 +103,7 @@ public class PropertyService {
 
     @Transactional(readOnly = true)
     public List<PropertySummaryDto> featured() {
-        return propertyRepository.findTop8ByStatusOrderByCreatedAtDesc(ListingStatus.APPROVED)
+        return propertyRepository.findTop12ByStatusOrderByCreatedAtDesc(ListingStatus.APPROVED)
                 .stream().map(DtoMapper::summary).toList();
     }
 

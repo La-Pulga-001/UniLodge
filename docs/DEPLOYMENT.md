@@ -71,7 +71,7 @@ Flyway migrations and seeds the demo data, so it can take a couple of minutes.
 
 ### 1.4 Demo content
 
-`DEMO_DATA=true` seeds 18 approved listings (**8** on the home page), one
+`DEMO_DATA=true` seeds 18 approved listings (**12** on the home page), one
 pending listing for the admin approval flow, student-board posts with
 comments, and five demo users. Seeding is idempotent: restarting the service
 adds anything missing and regenerates demo photos lost with the container
@@ -222,7 +222,7 @@ survive redeploys.
 
 ### 2.5 Demo content, email and administrators
 
-The demo accounts, 8 featured listings and student-board posts described in
+The demo accounts, 12 featured listings and student-board posts described in
 sections 1.4–1.6 work the same way. Open
 `https://<SITE_ADDRESS>/admin-setup.html` for the three original
 administrators. With `MAIL_MODE=console`, read the OTP codes from:

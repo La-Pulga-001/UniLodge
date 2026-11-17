@@ -94,7 +94,7 @@ redeploy. HTTPS is terminated by Northflank, so Caddy is not used here.
 
 ## 6. Demo content and logins
 
-`DEMO_DATA=true` seeds 18 approved listings (**8** on the home page), one
+`DEMO_DATA=true` seeds 18 approved listings (**12** on the home page), one
 pending listing for the admin approval flow, student-board posts with comments,
 and five users. Seeding is idempotent: restarts add anything missing and
 regenerate demo photos lost with the container filesystem.
