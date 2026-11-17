@@ -1,6 +1,6 @@
 # UniLodge.
 
-UniLodge is a/an/ana/banger student-accommodation platform for Ghana. Students browse approved
+UniLodge is a student-accommodation platform for Ghana. Students browse approved
 listings near their university, compare rent and distance, save favourites,
 post roommate requests, comment, and contact landlords directly. Landlords
 publish listings after administrator approval. Administrators moderate
@@ -26,15 +26,11 @@ unilodge-persistence/  JPA entities, repositories, specifications, Flyway SQL
 unilodge-service/      business logic: auth, OTP, email, storage, audit, admin
 unilodge-web/          Spring Boot app, REST controllers, security, static UI
 docs/API.md            endpoint reference
-docs/DEPLOYMENT.md     Railway and Oracle Cloud deployment guide
-railway.json           Railway build/health-check configuration
+docs/RENDER.md         free Render Blueprint deployment guide
+render.yaml            free Render Blueprint (web service + PostgreSQL)
 Dockerfile             multi-stage production image
-docker-compose.yml     local PostgreSQL + application stack
-docker-compose.prod.yml production VM stack with Caddy HTTPS
-deploy/                Oracle Cloud setup, Caddy config and backup scripts
-docker-entrypoint.sh   fixes mounted-disk ownership, drops privileges
-docker-compose.yml     PostgreSQL + application stack
-.env.example           environment template for Docker Compose
+docker-entrypoint.sh   container entrypoint (drops privileges)
+.env.example           environment variable template
 run-dev.bat            local Windows launcher (port 8081)
 ```
 
@@ -96,13 +92,13 @@ policy applies to geocoding and map tiles.
 
 ## 4. Deployment
 
-The production image is built from `Dockerfile` and needs a PostgreSQL
-database. [docs/RENDER.md](docs/RENDER.md) is the current deployment guide
-(free Render Blueprint, demo accounts, the 30-day database limit and the Neon
-migration path). [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) also covers
-[Northflank Sandbox](docs/NORTHFLANK.md) (free, no card, does not sleep),
-Railway and Oracle Cloud Always Free, plus environment variables, the `APP_URL`
-setting used in email links, and the administrator setup flow.
+Production is deployed on Render with the free Blueprint in `render.yaml`:
+one Docker web service built from `Dockerfile` and one managed PostgreSQL
+database. Every push to `main` deploys automatically.
+[docs/RENDER.md](docs/RENDER.md) is the only deployment guide. It covers the
+one-click deploy, demo accounts, free-plan limits (idle sleep, 30-day database
+expiry, console-only email), environment variables including the `APP_URL` used
+in email links, the administrator setup flow and the Neon migration path.
 
 Demo accounts use the password `Demo@1234`:
 
