@@ -1,7 +1,7 @@
 # Deploying UniLodge on Northflank (free, no card)
 
-Northflank's **Sandbox** plan is the best free option for this app: it needs no
-credit card, does not sleep, and includes 2 services, 1 database and up to
+Northflank's **Sandbox** plan is a strong free alternative to Render: it needs
+no credit card, does not sleep, and includes 2 services, 1 database and up to
 `$20/month` of compute. UniLodge uses one service and one PostgreSQL addon, so
 it fits.
 

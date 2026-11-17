@@ -1,0 +1,85 @@
+# Render Blueprint for UniLodge.
+#
+# One-click deploy:
+#   https://render.com/deploy?repo=https://github.com/La-Pulga-001/UniLodge
+#
+# Creates one free Docker web service and one free Render Postgres database in
+# Frankfurt (the closest Render region to Ghana). Free-plan limits, the 30-day
+# database expiry and the Neon migration path are documented in docs/RENDER.md.
+#
+# Render's Postgres "connectionString" is a postgresql:// URL, which the JDBC
+# driver cannot use directly, so the discrete host/port/database/user/password
+# fields are wired in instead.
+
+databases:
+  - name: unilodge-db
+    databaseName: unilodge
+    user: unilodge_app
+    plan: free
+    region: frankfurt
+    # 17 is the newest version Flyway supports without a compatibility warning.
+    postgresMajorVersion: "17"
+
+services:
+  - type: web
+    name: unilodge
+    runtime: docker
+    plan: free
+    region: frankfurt
+    dockerfilePath: ./Dockerfile
+    dockerContext: .
+    healthCheckPath: /api/universities
+    autoDeployTrigger: commit
+    envVars:
+      - key: SPRING_PROFILES_ACTIVE
+        value: prod
+
+      # The application assembles the JDBC URL from these values.
+      - key: DB_HOST
+        fromDatabase:
+          name: unilodge-db
+          property: host
+      - key: DB_PORT
+        fromDatabase:
+          name: unilodge-db
+          property: port
+      - key: DB_NAME
+        fromDatabase:
+          name: unilodge-db
+          property: database
+      - key: DB_USERNAME
+        fromDatabase:
+          name: unilodge-db
+          property: user
+      - key: DB_PASSWORD
+        fromDatabase:
+          name: unilodge-db
+          property: password
+
+      # Render generates a long random signing secret on first apply and keeps
+      # it stable across deploys, so sessions survive.
+      - key: JWT_SECRET
+        generateValue: true
+
+      # Seed the demo accounts, 18 sample listings and student-board posts.
+      # Demo logins use the password Demo@1234; see docs/RENDER.md.
+      - key: DEMO_DATA
+        value: "true"
+
+      # Free web services cannot send outbound SMTP (ports 25/465/587 are
+      # blocked), so emails and OTP codes go to the Render log. Replace this
+      # after upgrading to a paid instance and configuring MAIL_* variables.
+      - key: MAIL_MODE
+        value: console
+
+      # The free instance has 512 MB RAM and 0.1 CPU. Cap the heap so the JVM
+      # stays inside the container, use the low-overhead serial collector, and
+      # skip C2 JIT compilation to speed up cold starts.
+      - key: JAVA_TOOL_OPTIONS
+        value: "-XX:MaxRAMPercentage=60 -XX:+UseSerialGC -XX:TieredStopAtLevel=1 -XX:MaxMetaspaceSize=128m -XX:ReservedCodeCacheSize=48m -Xss512k -Djava.awt.headless=true"
+
+      # APP_URL is intentionally unset: the production profile falls back to
+      # RENDER_EXTERNAL_URL, so links use the correct https:// address.
+      # Uncomment this after attaching a custom domain:
+      # - key: APP_URL
+      #   value: https://unilodge.example.com

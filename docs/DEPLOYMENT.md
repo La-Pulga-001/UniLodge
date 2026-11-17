@@ -1,11 +1,12 @@
 # Deploying UniLodge
 
-UniLodge ships as a single Docker image (`Dockerfile`) plus a PostgreSQL 18
-database. Three hosting paths are supported:
+UniLodge ships as a single Docker image (`Dockerfile`) plus a PostgreSQL
+database. Four hosting paths are supported:
 
 | Path | Cost | Effort | Best for |
 | --- | --- | --- | --- |
-| **Northflank Sandbox** (recommended free) | `$0`, no card, `$20/month` resource allowance | Low — Git deploys, managed Postgres | A free demo that stays online. See [NORTHFLANK.md](NORTHFLANK.md) |
+| **Render Free** (current) | `$0`, no card; sleeps when idle and the database expires after 30 days | Low — Blueprint deploy | A public demo now. See [RENDER.md](RENDER.md) |
+| **Northflank Sandbox** (free alternative) | `$0`, no card, `$20/month` resource allowance | Low — Git deploys, managed Postgres | A free demo that stays online. See [NORTHFLANK.md](NORTHFLANK.md) |
 | **Railway** | Hobby `$5/month` plus usage; Free Trial `$5` for 30 days | Low — Git push deploys | A live demo or small production launch |
 | **Oracle Cloud Always Free** | `$0` forever | High — you manage the VM | A zero-cost deployment you can maintain |
 
@@ -15,7 +16,7 @@ database. Three hosting paths are supported:
 > permanent. The app never sleeps on Railway.
 
 The container reads the port from `PORT` and exposes a health check at
-`/api/universities`, so both paths work without code changes.
+`/api/universities`, so every path works without code changes.
 
 ---
 
@@ -277,7 +278,7 @@ it.
 | `SPRING_PROFILES_ACTIVE` | yes | `prod` in any hosted environment |
 | `DB_HOST`, `DB_PORT`, `DB_NAME`, `DB_USERNAME`, `DB_PASSWORD` | yes | PostgreSQL connection; `PGHOST`/`PGPORT`/`PGDATABASE`/`PGUSER`/`PGPASSWORD` and `DB_URL` are also accepted |
 | `JWT_SECRET` | yes | Signing key for sessions; at least 32 characters, never change it after users sign in |
-| `APP_URL` | yes | Public `https://` address used in email links |
+| `APP_URL` | yes | Public `https://` address used in email links. On Render it falls back to `RENDER_EXTERNAL_URL`, so a Blueprint deploy needs no manual value. |
 | `DEMO_DATA` | no | `true` seeds demo accounts, 18 listings and board posts (default in `prod`) |
 | `MAIL_MODE` | no | `smtp` (default) or `console` to log emails |
 | `MAIL_HOST`, `MAIL_PORT`, `MAIL_USERNAME`, `MAIL_PASSWORD`, `MAIL_FROM` | no | SMTP delivery |

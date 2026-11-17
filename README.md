@@ -96,11 +96,13 @@ policy applies to geocoding and map tiles.
 
 ## 4. Deployment
 
-The production image is built from `Dockerfile` and needs a PostgreSQL 18
-database. [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) covers hosting, including
+The production image is built from `Dockerfile` and needs a PostgreSQL
+database. [docs/RENDER.md](docs/RENDER.md) is the current deployment guide
+(free Render Blueprint, demo accounts, the 30-day database limit and the Neon
+migration path). [docs/DEPLOYMENT.md](docs/DEPLOYMENT.md) also covers
 [Northflank Sandbox](docs/NORTHFLANK.md) (free, no card, does not sleep),
 Railway and Oracle Cloud Always Free, plus environment variables, the `APP_URL`
-setting used in email links, demo accounts, and the administrator setup flow.
+setting used in email links, and the administrator setup flow.
 
 Demo accounts use the password `Demo@1234`:
 
